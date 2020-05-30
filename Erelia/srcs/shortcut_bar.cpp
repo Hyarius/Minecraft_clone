@@ -5,7 +5,7 @@ Shortcut_bar::Shortcut_bar(jgl::Widget* p_parent) : jgl::Widget(p_parent)
 	_selected_item = nullptr;
 	_shortcut_frame = new jgl::Frame(this);
 	_shortcut_frame->activate();
-
+	_item_slots.resize(9);
 	for (size_t i = 0; i < 9; i++)
 	{
 		_item_slots[i] = new Item_slot(icon_tile, nullptr, _shortcut_frame);
@@ -35,6 +35,9 @@ void Shortcut_bar::set_item(size_t index, Item* p_item)
 
 bool Shortcut_bar::handle_mouse()
 {
+	if (_disable == true)
+		return false;
+	
 	static int index = 0;
 	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::release)
 	{
@@ -64,7 +67,7 @@ void Shortcut_bar::set_geometry_imp(jgl::Vector2 p_anchor, jgl::Vector2 p_area)
 {
 	_shortcut_frame->set_geometry(0, p_area);
 
-	jgl::Vector2 size = p_area.y / 1.2f;
+	jgl::Vector2 size = Item_slot::size();
 	jgl::Vector2 pos = (p_area.y - size.y) / 2;
 	float delta = (p_area.x - size.x * 9 - pos.x * 2) / 8 + size.x;
 	for (size_t i = 0; i < 9; i++)

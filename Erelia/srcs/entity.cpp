@@ -22,12 +22,12 @@ void Entity::create_mesh(jgl::Color color)
 	_mesh->add_uv(Vector2(1.0f, 1.0f));
 
 	// FACE DOWN
-	_mesh->add_face(jgl::Face(new int[3]{ 2, 3, 1 }, new int[3]{ 3, 2, 1 }, new int[3]{ -1, -1, -1 }, color));
-	_mesh->add_face(jgl::Face(new int[3]{ 0, 1, 3 }, new int[3]{ 0, 1, 2 }, new int[3]{ -1, -1, -1 }, color));
+	_mesh->add_face(jgl::Face(new int[3]{ 2, 3, 1 }, new int[3]{ 3, 2, 1 }, new int[3]{ -1, -1, -1 }));
+	_mesh->add_face(jgl::Face(new int[3]{ 0, 1, 3 }, new int[3]{ 0, 1, 2 }, new int[3]{ -1, -1, -1 }));
 
 	// FACE TOP
-	_mesh->add_face(jgl::Face(new int[3]{ 2, 1, 3 }, new int[3]{ 3, 1, 2 }, new int[3]{ -1, -1, -1 }, color));
-	_mesh->add_face(jgl::Face(new int[3]{ 0, 3, 1 }, new int[3]{ 0, 2, 1 }, new int[3]{ -1, -1, -1 }, color));
+	_mesh->add_face(jgl::Face(new int[3]{ 2, 1, 3 }, new int[3]{ 3, 1, 2 }, new int[3]{ -1, -1, -1 }));
+	_mesh->add_face(jgl::Face(new int[3]{ 0, 3, 1 }, new int[3]{ 0, 2, 1 }, new int[3]{ -1, -1, -1 }));
 
 	_mesh->bake();
 }

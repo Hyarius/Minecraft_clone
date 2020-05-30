@@ -1,8 +1,8 @@
 #include "erelia.h"
 
-Game_mode::Game_mode(Game_engine* p_engine, Board* p_board)
+Game_mode::Game_mode(Game_engine* p_engine)
 {
 	_engine = p_engine;
-	_board = p_board;
-	_camera = new jgl::Camera(0, 45, g_application->size().x / g_application->size().y);
+	_contener = new jgl::Contener(p_engine);
+	_contener->activate();
 }

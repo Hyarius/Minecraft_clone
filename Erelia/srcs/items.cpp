@@ -1,13 +1,14 @@
 #include "erelia.h"
 
-Item::Item(int p_id, int p_icon)
+Item::Item(jgl::String p_name, int p_id, Vector2 p_icon)
 {
+	name = p_name;
 	type = item_type::error;
 	id = p_id;
 	icon = p_icon;
 }
 
-Block_item::Block_item(int p_id, int p_icon, int p_block_id) : Item(p_id, p_icon)
+Block_item::Block_item(jgl::String p_name, int p_id, Vector2 p_icon, int p_block_id) : Item(p_name, p_id, p_icon)
 {
 	type = item_type::block;
 	block_id = p_block_id;

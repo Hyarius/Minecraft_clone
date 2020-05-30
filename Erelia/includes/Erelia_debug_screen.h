@@ -14,7 +14,7 @@ struct Debug_line
 	jgl::text_color text_color = jgl::text_color::white;
 	int line = 0;
 
-	jgl::Image* text_image;
+	jgl::Image* text_image = nullptr;
 
 	Debug_line()
 	{
@@ -131,7 +131,7 @@ public:
 				{
 					if (_line_order[type][i]->text_image == nullptr)
 						_line_order[type][i]->create_text_image(_text_size);
-					Vector2 pos = _begin_pos + Vector2(0, calc_line_heigth(i));
+					Vector2 pos = _begin_pos + Vector2(0, calc_line_heigth(i)) + self_anchor();
 					if (_line_order[type][i]->align != jgl::alignment::left)
 					{
 						int len = static_cast<int>(_line_order[type][i]->text_image->size().x);

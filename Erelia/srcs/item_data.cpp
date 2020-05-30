@@ -1,18 +1,44 @@
 #include "erelia.h"
 
+jgl::Vector2 Item_slot::_size = 80;
+
 jgl::Sprite_sheet* icon_tile = nullptr;
 
-Item* item_list[12] = {
-	new Block_item(0, 0, 0),
-	new Block_item(1, 1, 1),
-	new Block_item(2, 2, 2),
-	new Block_item(3, 3, 3),
-	new Block_item(4, 4, 4),
-	new Block_item(5, 5, 5),
-	new Block_item(6, 6, 6),
-	new Block_item(7, 7, 7),
-	new Block_item(8, 8, 8),
-	new Block_item(9, 9, 9),
-	new Block_item(10, 10, 10),
-	new Block_item(11, 11, 11)
+jgl::String items_name[] = {
+	"Grass",
+	"Dirt",
+	"Water",
+	"Snow",
+	"Forest grass",
+	"Dirt",
+	"Water",
+	"Stone",
+	"Haunted forest grass",
+	"Sand",
+	"Water",
+	"Dark stone"
 };
+
+Vector2 items_icon[] = {
+	{0, 0},
+	{1, 0},
+	{2, 0},
+	{3, 0},
+	{4, 0},
+	{5, 0},
+	{6, 0},
+	{7, 0},
+	{8, 0},
+	{9, 0},
+	{0, 1},
+	{1, 1},
+};
+
+Item** item_list;
+
+Item* get_item(int index)
+{
+	if (index >= static_cast<int>(Item_id::count) || index < 0)
+		return (nullptr);
+	return (item_list[index]);
+}

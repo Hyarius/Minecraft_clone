@@ -18,6 +18,7 @@ private:
 	Voxel**** _voxels;
 public:
 	Chunk(jgl::Sprite_sheet *p_tile_tileset, Vector3 p_pos);
+	bool need_bake(class Board* board, Vector3 pos);
 	void bake(class Board* board);
 	void render(jgl::Camera* camera);
 	void render_transparent(jgl::Camera *camera);

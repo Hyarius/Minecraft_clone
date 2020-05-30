@@ -208,11 +208,20 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\jgl_text.cpp">
       <Filter>JGL\srcs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\shader_content.cpp">
-      <Filter>JGL\srcs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_mesh_part.cpp">
       <Filter>JGL\srcs\structure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\shader_content_2D.cpp">
+      <Filter>JGL\srcs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\shader_content_3D.cpp">
+      <Filter>JGL\srcs</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\editor_inventory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\editor_inventory_tab.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +398,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\jgl_text.h">
       <Filter>JGL\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Erelia_editor_inventory.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Erelia_editor_inventory_tab.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_contener.h">
+      <Filter>JGL\includes\widget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

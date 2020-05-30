@@ -31,7 +31,8 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\jgl_operator_cout.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\jgl_privitive_mesh.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\jgl_text.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\shader_content.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\shader_content_2D.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\shader_content_3D.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_application.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_camera.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_color.cpp" />
@@ -80,6 +81,8 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_value_entry_component.cpp" />
     <ClCompile Include="srcs\board.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
+    <ClCompile Include="srcs\editor_inventory.cpp" />
+    <ClCompile Include="srcs\editor_inventory_tab.cpp" />
     <ClCompile Include="srcs\entity.cpp" />
     <ClCompile Include="srcs\editor_mode.cpp" />
     <ClCompile Include="srcs\game_engine.cpp" />
@@ -125,6 +128,7 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_button.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_check_box.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_check_entry.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_contener.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_frame.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_hour_entry.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_image_label.h" />
@@ -142,6 +146,8 @@
     <ClInclude Include="includes\Erelia_board.h" />
     <ClInclude Include="includes\Erelia_chunk.h" />
     <ClInclude Include="includes\Erelia_debug_screen.h" />
+    <ClInclude Include="includes\Erelia_editor_inventory.h" />
+    <ClInclude Include="includes\Erelia_editor_inventory_tab.h" />
     <ClInclude Include="includes\Erelia_editor_mode.h" />
     <ClInclude Include="includes\Erelia_entity.h" />
     <ClInclude Include="includes\Erelia_game_engine.h" />
@@ -213,7 +219,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>includes;C:\Developement\JGL\includes\;C:\Developement\JGL\includes\widget_component;C:\Developement\JGL\includes\widget;C:\Developement\JGL\includes\structure;$(IncludePath)</IncludePath>
+    <IncludePath>includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -235,7 +241,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Developement\GLM\gtx;C:\Developement\GLM\gtc;C:\Developement\GLM\detail;C:\Developement\GLM;C:\Developement\SDL2\includes;C:\Developement\GLEW\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Developement\GLM\gtx;C:\Developement\GLM\gtc;C:\Developement\GLM\detail;C:\Developement\GLM;C:\Developement\SDL2\includes;C:\Developement\GLEW\includes;C:\Developement\JGL\includes\;C:\Developement\JGL\includes\widget_component;C:\Developement\JGL\includes\widget;C:\Developement\JGL\includes\structure;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -252,7 +258,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Developement\SDL2\includes;C:\Developement\GLEW\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Developement\GLM\gtx;C:\Developement\GLM\gtc;C:\Developement\GLM\detail;C:\Developement\GLM;C:\Developement\SDL2\includes;C:\Developement\GLEW\includes;C:\Developement\JGL\includes\;C:\Developement\JGL\includes\widget_component;C:\Developement\JGL\includes\widget;C:\Developement\JGL\includes\structure;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -1,6 +1,7 @@
 #include "erelia.h"
 
 extern float block_alpha_array[12];
+extern Vector3 voxel_neighbour[9];
 
 jgl::Mesh* tmp_cube = nullptr;
 Vector3 chunk_size = Vector3(9, 9, 9);
@@ -10,6 +11,7 @@ Chunk::Chunk(jgl::Sprite_sheet* p_tileset, Vector3 p_pos)
 	_tileset = p_tileset;
 	_pos = p_pos;
 	_voxels = new Voxel * **[static_cast<int>(floor(chunk_size.x))];
+	int height = chunk_size.y / 2;
 	for (int i = 0; i < chunk_size.x; i++)
 	{
 		_voxels[i] = new Voxel **[static_cast<int>(floor(chunk_size.y))];
@@ -19,29 +21,46 @@ Chunk::Chunk(jgl::Sprite_sheet* p_tileset, Vector3 p_pos)
 			for (int k = 0; k < chunk_size.z; k++)
 			{
 				Vector3 tmp = Vector3(i, j, k);
-				_voxels[i][j][k] = new Voxel(tmp, (j <= 0 ? 0 : -1), nullptr);
+				_voxels[i][j][k] = new Voxel(tmp, (j <= height ? 0 : -1), nullptr);
 			}
 		}
 	}
 	_mesh = new jgl::Mesh(0);
-	_mesh->set_texture(_tileset);
+	_mesh->set_diffuse_texture(_tileset);
 	_mesh_transparent = new jgl::Mesh(0);
 	_mesh_transparent->set_transparency(0.5f);
-	_mesh_transparent->set_texture(_tileset);
+	_mesh_transparent->set_diffuse_texture(_tileset);
+}
+
+bool Chunk::need_bake(Board* board, Vector3 p_pos)
+{
+	Voxel* actual = board->voxels(p_pos);
+	Voxel* tmp_next;
+
+	float base_alpha = block_alpha_array[actual->type()];
+	for (size_t i = 3; i < 9; i++)
+	{
+		tmp_next = board->voxels(p_pos + voxel_neighbour[i]);
+		float tmp_alpha = (tmp_next == nullptr ? base_alpha : block_alpha_array[tmp_next->type()]);
+		if (tmp_next == nullptr || tmp_next->type() == -1 || tmp_alpha != base_alpha)
+			return (true);
+	}
+	return (false);
 }
 
 void Chunk::bake(Board *board)
 {
+	Vector3 starter_pos = _pos * chunk_size;
 	_mesh->clear();
 	_mesh_transparent->clear();
-	for (int i = 0; i < chunk_size.x; i++)
+	for (int i = 0; i < chunk_size.y; i++)
 	{
-		for (int j = 0; j < chunk_size.y; j++)
+		for (int j = 0; j < chunk_size.x; j++)
 		{
 			for (int k = 0; k < chunk_size.z; k++)
 			{
-				Voxel* tmp_voxel = _voxels[i][j][k];
-				if (tmp_voxel->type() != -1)
+				Voxel* tmp_voxel = _voxels[j][i][k];
+				if (tmp_voxel->type() != -1 && need_bake(board, Vector3(starter_pos.x + j, starter_pos.y + i, starter_pos.z + k)) == true)
 				{
 					tmp_cube = tmp_voxel->construct(board, _pos, tmp_cube);
 					if (tmp_cube != nullptr)

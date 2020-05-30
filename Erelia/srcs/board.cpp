@@ -1,10 +1,7 @@
 #include "erelia.h"
 
-jgl::Mesh* tmp_tree;
-
 Board::Board()
 {
-	tmp_tree = new jgl::Mesh("ressources/model/cottage_obj.obj", Vector3(3, 3, 3), 0, 0.25f);
 	_chunks.clear();
 
 	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(16, 18));
@@ -62,7 +59,6 @@ void Board::render(jgl::Camera *camera)
 		_entities[i]->render(camera);
 	for (auto tmp : _chunks)
 		tmp.second->render_transparent(camera);
-	tmp_tree->render(camera);
 }
 
 void Board::update()

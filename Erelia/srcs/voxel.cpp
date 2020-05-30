@@ -90,14 +90,6 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 	if (_type == -1)
 		return (nullptr);
 
-	static jgl::Color tmp_color[4] = {
-		jgl::Color(219, 188, 125),
-		jgl::Color(199, 171, 113),
-		jgl::Color(117, 86, 60),
-		jgl::Color(92, 67, 47)
-	};
-	int color_type = (_rel_pos.y == 0 ? 0 : 2);
-
 	Vector3 tmp_pos = _rel_pos + chunk_pos * chunk_size;
 	jgl::Mesh* result;
 	if (target == nullptr)
@@ -137,8 +129,7 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 
 				compose_face(board, chunk_pos, tmp_uvs_index, face, index);
 
-				int tmp_color_delta = ((static_cast<int>(abs(tmp_pos.x)) % 2) + (static_cast<int>(abs(tmp_pos.z)) % 2) + static_cast<int>(abs(tmp_pos.y)) % 2) % 2;
-				result->add_face(jgl::Face(tmp_vertices_index, tmp_uvs_index, tmp_normales_index, tmp_color[color_type + tmp_color_delta]));
+				result->add_face(jgl::Face(tmp_vertices_index, tmp_uvs_index, tmp_normales_index));
 			}
 		}
 	}

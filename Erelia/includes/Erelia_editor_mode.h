@@ -4,12 +4,13 @@
 #include "jgl.h"
 #include "Erelia_game_mode.h"
 #include "Erelia_debug_screen.h"
-#include "erelia_shortcut_bar.h"
+#include "Erelia_editor_inventory.h"
 
 class Editor_mode : public Game_mode
 {
 protected:
-	class Game_engine* _engine;
+	Board* _board;
+	jgl::Camera* _camera;
 	Uint32 _actual_tick;
 	Uint32 _timer; 
 	Uint32 _delta_time;
@@ -22,7 +23,10 @@ protected:
 	Vector3 _voxel_source;
 	Vector3 _voxel_target;
 
-	Shortcut_bar *_shortcut_bar;
+	jgl::Button* _save_button;
+	jgl::Button* _load_button;
+
+	Editor_inventory* _editor_inventory;
 
 	Debug_screen* _debug_screen;
 
