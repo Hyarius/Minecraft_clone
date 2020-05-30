@@ -178,7 +178,13 @@ bool Editor_mode::handle_mouse()
 	{
 		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
 		{
-			if (voxel_raycast(_camera->pos(), _camera->mouse_direction(), &_voxel_source, &_voxel_target) == true)
+			if (_board->chunks().size() == 0)
+			{
+				_voxel_target = 0;
+				jgl::Data param = jgl::Data(2, _board, &_voxel_target);
+				_editor_inventory->selected_item()->item()->use(param);
+			}
+			else if (voxel_raycast(_camera->pos(), _camera->mouse_direction(), &_voxel_source, &_voxel_target) == true)
 			{
 				jgl::Data param = jgl::Data(2, _board, &_voxel_target);
 				_editor_inventory->selected_item()->item()->use(param);

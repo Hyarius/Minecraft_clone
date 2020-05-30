@@ -2,6 +2,13 @@
 
 extern float block_alpha_array[12];
 extern Vector3 voxel_neighbour[9];
+extern Vector2 voxel_uv[35];
+extern Vector3 voxel_normales[9];
+extern std::vector<Vector2> uv_type_delta;
+
+std::vector<jgl::Vector3> chunk_content_vertice;
+std::vector<jgl::Vector2> chunk_content_uvs;
+std::vector<jgl::Vector3> chunk_content_normales;
 
 jgl::Mesh* tmp_cube = nullptr;
 Vector3 chunk_size = Vector3(9, 9, 9);
@@ -27,9 +34,37 @@ Chunk::Chunk(jgl::Sprite_sheet* p_tileset, Vector3 p_pos)
 	}
 	_mesh = new jgl::Mesh(0);
 	_mesh->set_diffuse_texture(_tileset);
+	init_mesh(_mesh);
 	_mesh_transparent = new jgl::Mesh(0);
 	_mesh_transparent->set_transparency(0.5f);
 	_mesh_transparent->set_diffuse_texture(_tileset);
+	init_mesh(_mesh_transparent);
+}
+
+void Chunk::init_mesh(jgl::Mesh *target)
+{
+	if (chunk_content_vertice.size() == 0)
+	{
+		for (int k = 0; k <= chunk_size.z * 2; k++)
+			for (int j = 0; j <= chunk_size.y * 2; j++)
+				for (int i = 0; i <= chunk_size.x * 2; i++)
+					chunk_content_vertice.push_back(Vector3(i / 2.0f, j / 2.0f, k / 2.0f));
+	}
+	if (chunk_content_uvs.size() == 0)
+	{
+		for (size_t type = 0; type < uv_type_delta.size(); type++)
+			for (size_t i = 0; i < 35; i++)
+				chunk_content_uvs.push_back(_tileset->unit() * (voxel_uv[i] + uv_type_delta[type]));
+	}
+	if (chunk_content_normales.size() == 0)
+	{
+		for (size_t i = 0; i < 9; i++)
+			chunk_content_normales.push_back(voxel_normales[i]);
+	}
+	jgl::Mesh_part* part = target->check_part(0);
+	part->set_vertices(chunk_content_vertice);
+	part->set_uvs(chunk_content_uvs);
+	part->set_normales(chunk_content_normales);
 }
 
 bool Chunk::need_bake(Board* board, Vector3 p_pos)
@@ -51,8 +86,9 @@ bool Chunk::need_bake(Board* board, Vector3 p_pos)
 void Chunk::bake(Board *board)
 {
 	Vector3 starter_pos = _pos * chunk_size;
-	_mesh->clear();
-	_mesh_transparent->clear();
+
+	_mesh->clear_baked();
+	_mesh_transparent->clear_baked();
 	for (int i = 0; i < chunk_size.y; i++)
 	{
 		for (int j = 0; j < chunk_size.x; j++)
@@ -65,10 +101,12 @@ void Chunk::bake(Board *board)
 					tmp_cube = tmp_voxel->construct(board, _pos, tmp_cube);
 					if (tmp_cube != nullptr)
 					{
-						if (block_alpha_array[tmp_voxel->type()] != 1)
-							_mesh_transparent->add_component(tmp_cube);
-						else
-							_mesh->add_component(tmp_cube);
+						jgl::Mesh_part *other = tmp_cube->check_part(0);
+						for (size_t i = 0; i < other->faces().size(); i++)
+						{
+							jgl::Mesh *target = (block_alpha_array[tmp_voxel->type()] != 1 ? _mesh_transparent : _mesh);
+							target->add_face(*(other->faces(i)));
+						}
 					}
 				}
 			}

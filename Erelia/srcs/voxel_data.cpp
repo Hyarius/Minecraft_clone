@@ -110,7 +110,7 @@ Vector3 voxel_normales[9]{
 	{-1, 0, 0}
 };
 
-Vector2 uv_type_delta[]{
+std::vector<Vector2> uv_type_delta = {
 	{0, 0},
 	{4, 0},
 	{8, 0},

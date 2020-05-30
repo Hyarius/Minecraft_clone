@@ -6,7 +6,7 @@ extern Vector3 voxel_neighbour[9];
 extern int face_index_order[2][3];
 extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
-extern Vector2 uv_type_delta[];
+extern std::vector<Vector2> uv_type_delta;
 extern int  uvs_face_index[9][4];
 extern int uvs_top_face_index[4][2][2][2][1];
 extern Vector3 neightbour_compose_face[4][3];
@@ -51,8 +51,9 @@ void Voxel::compose_face(Board *board, Vector3 chunk_pos, int* dest, int face, i
 {
 	if (face >= 4)
 	{
+		int sprite_index_delta = _type * 35;
 		for (size_t j = 0; j < 3; j++)
-			dest[j] = uvs_face_index[face][face_index_order[index][j]];
+			dest[j] = uvs_face_index[face][face_index_order[index][j]] + sprite_index_delta;
 	}
 	else
 	{
@@ -77,10 +78,11 @@ void Voxel::compose_face(Board *board, Vector3 chunk_pos, int* dest, int face, i
 			if (voxels_to_try[j] == nullptr || (voxels_to_try[j + 3] != nullptr && (voxels_to_try[j + 3]->type() != -1 && block_alpha_array[voxels_to_try[j + 3]->type()] == 1.0f)) || voxels_to_try[j]->type() != _type)
 				voxel_value[j] = DIFFERENT;
 		}
+		int sprite_index_delta = _type * 35;
 		for (size_t j = 0; j < 3; j++)
 		{
 			int value_index = delta_face_index[index][j];
-			dest[j] = uvs_top_face_index[face][voxel_value[0]][voxel_value[1]][voxel_value[2]][0] + value_index;
+			dest[j] = uvs_top_face_index[face][voxel_value[0]][voxel_value[1]][voxel_value[2]][0] + value_index + sprite_index_delta;
 		}
 	}
 }
@@ -90,26 +92,23 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 	if (_type == -1)
 		return (nullptr);
 
-	Vector3 tmp_pos = _rel_pos + chunk_pos * chunk_size;
+	Vector3 self_pos = _rel_pos + chunk_pos * chunk_size;
 	jgl::Mesh* result;
 	if (target == nullptr)
 	{
-		result = new jgl::Mesh(_rel_pos);
-		add_voxel_comp(board->tileset(), result);
+		result = new jgl::Mesh(0);
 	}
 	else
 	{
 		result = target;
-		result->place(_rel_pos);
-		edit_voxel_comp(board->tileset(), result);
-		result->clear_baked();
+		result->clear();
 	}
 
 	float base_alpha = block_alpha_array[_type];
 
 	for (size_t face = 0; face < 9; face++)
 	{
-		Vector3 tmp_next = tmp_pos + voxel_neighbour[face];
+		Vector3 tmp_next = self_pos + voxel_neighbour[face];
 		Voxel* tmp_voxel = board->voxels(tmp_next);
 		float tmp_alpha = (tmp_voxel == nullptr ? base_alpha : block_alpha_array[tmp_voxel->type()]);
 
@@ -123,7 +122,9 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 
 				for (size_t j = 0; j < 3; j++)
 				{
-					tmp_vertices_index[j] = vertices_face_index[face][face_index_order[index][j]];
+					Vector3 tmp_pos = _rel_pos + voxel_vertices[vertices_face_index[face][face_index_order[index][j]]];
+					int tmp_index = tmp_pos.x * 2 + tmp_pos.y * 2 * (chunk_size.x * 2 + 1) + tmp_pos.z * 2 * ((chunk_size.x * 2 + 1) * (chunk_size.y * 2 + 1));
+					tmp_vertices_index[j] = tmp_index;
 					tmp_normales_index[j] = face;
 				}
 
