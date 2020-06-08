@@ -83,14 +83,19 @@
     <ClCompile Include="srcs\chunk.cpp" />
     <ClCompile Include="srcs\editor_inventory.cpp" />
     <ClCompile Include="srcs\editor_inventory_tab.cpp" />
+    <ClCompile Include="srcs\Editor_visualizer.cpp" />
     <ClCompile Include="srcs\entity.cpp" />
     <ClCompile Include="srcs\editor_mode.cpp" />
     <ClCompile Include="srcs\game_engine.cpp" />
     <ClCompile Include="srcs\game_mode.cpp" />
     <ClCompile Include="srcs\items.cpp" />
     <ClCompile Include="srcs\item_data.cpp" />
+    <ClCompile Include="srcs\item_slot.cpp" />
+    <ClCompile Include="srcs\loading_menu.cpp" />
     <ClCompile Include="srcs\main.cpp" />
+    <ClCompile Include="srcs\saving_menu.cpp" />
     <ClCompile Include="srcs\shortcut_bar.cpp" />
+    <ClCompile Include="srcs\tactical_controler.cpp" />
     <ClCompile Include="srcs\voxel_data.cpp" />
     <ClCompile Include="srcs\voxel.cpp" />
   </ItemGroup>
@@ -129,6 +134,7 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_check_box.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_check_entry.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_contener.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_file_menu.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_frame.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_hour_entry.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_image_label.h" />
@@ -155,16 +161,15 @@
     <ClInclude Include="includes\Erelia_item.h" />
     <ClInclude Include="includes\Erelia_item_slot.h" />
     <ClInclude Include="includes\Erelia_shortcut_bar.h" />
+    <ClInclude Include="includes\Erelia_tactical_controller.h" />
     <ClInclude Include="includes\Erelia_voxel.h" />
+    <ClInclude Include="includes\Erelia_icon_holder.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="ressources\font\karma future.ttf" />
     <Font Include="ressources\font\karma suture.ttf" />
     <Font Include="ressources\font\manaspc.ttf" />
     <Font Include="ressources\font\yoster.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ressources\maps\tmp.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

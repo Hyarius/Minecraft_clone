@@ -1,20 +1,26 @@
 #include "erelia.h"
 
 size_t inventory_tab_size[] = {
-	30, 20, 10, 10, 10
+	60, 45, 30, 30, 30
 };
 Vector2 library_nb_element = Vector2(10, 6);
 Vector2 button_nb_element = Vector2(2.0f, library_nb_element.y);
 
-int block_tab_item_id[30] = {
+int block_tab_item_id[60] = {
 		0,	1,	2,	3,	4,	5,	6,	7,	8,	9,
 		10,	11,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
 		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1
 };
 
-int decor_tab_item_id[20] = {
+int decor_tab_item_id[45] = {
 		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
-		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1
+		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+		-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+		-1,	-1,	-1,	-1,	-1
 };
 
 int* inventory_tab_item_id[] =
@@ -27,6 +33,8 @@ Editor_inventory_tab::Editor_inventory_tab(size_t p_index, jgl::Widget* parent)
 {
 	_tab_index = p_index;
 	_frame = new jgl::Frame(parent);
+	_scrollbar = new jgl::Vscroll_bar(_frame);
+	_scrollbar->activate();
 	_tab_index = p_index;
 	_nb_slot = inventory_tab_size[_tab_index];
 	_items_slot.resize(_nb_slot);
@@ -48,9 +56,8 @@ void Editor_inventory_tab::desactivate()
 	_frame->desactivate();
 }
 
-void Editor_inventory_tab::set_geometry(Vector2 p_anchor, Vector2 p_area)
+void Editor_inventory_tab::reset()
 {
-	_frame->set_geometry(p_anchor, p_area);
 	for (size_t i = 0; i < _nb_slot; i++)
 	{
 		Vector2 slot_pos = Vector2(
@@ -59,4 +66,11 @@ void Editor_inventory_tab::set_geometry(Vector2 p_anchor, Vector2 p_area)
 		);
 		_items_slot[i]->set_geometry(slot_pos, Item_slot::size());
 	}
+}
+
+void Editor_inventory_tab::set_geometry(Vector2 p_anchor, Vector2 p_area)
+{
+	_frame->set_geometry(p_anchor, p_area - Vector2(20, 0));
+	_scrollbar->set_geometry(Vector2(p_area.x - 20, 0.0f), Vector2(20.0f, p_area.y));
+	reset();
 }

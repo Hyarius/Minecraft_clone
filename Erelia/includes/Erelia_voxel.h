@@ -28,6 +28,8 @@ public:
 	void add_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target);
 	void compose_face(class Board* board, Vector3 chunk_pos, int* dest, int face, int index);
 	jgl::Mesh* construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target = nullptr);
+
+	void save(Vector3 delta, std::fstream& file);
 };
 
 #endif

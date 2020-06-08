@@ -16,19 +16,19 @@ float block_alpha_array[12] = {
 };
 
 Vector3 voxel_vertices[13]{
-	{0.0f, 0.0f, 0.0f}, // A
-	{1.0f, 0.0f, 0.0f}, // B
-	{0.0f, 0.0f, 1.0f}, // C
-	{1.0f, 0.0f, 1.0f}, // D
-	{0.0f, 1.0f, 0.0f}, // E
-	{0.5f, 1.0f, 0.0f}, // F
-	{0.0f, 1.0f, 0.5f}, // G
-	{0.5f, 1.0f, 0.5f}, // H
-	{1.0f, 1.0f, 0.0f}, // I
-	{1.0f, 1.0f, 0.5f}, // J
-	{0.0f, 1.0f, 1.0f}, // K
-	{0.5f, 1.0f, 1.0f}, // L
-	{1.0f, 1.0f, 1.0f}, // M
+	Vector3(0.0f, 0.0f, 0.0f), // A
+	Vector3(1.0f, 0.0f, 0.0f), // B
+	Vector3(0.0f, 0.0f, 1.0f), // C
+	Vector3(1.0f, 0.0f, 1.0f), // D
+	Vector3(0.0f, 1.0f, 0.0f), // E
+	Vector3(0.5f, 1.0f, 0.0f), // F
+	Vector3(0.0f, 1.0f, 0.5f), // G
+	Vector3(0.5f, 1.0f, 0.5f), // H
+	Vector3(1.0f, 1.0f, 0.0f), // I
+	Vector3(1.0f, 1.0f, 0.5f), // J
+	Vector3(0.0f, 1.0f, 1.0f), // K
+	Vector3(0.5f, 1.0f, 1.0f), // L
+	Vector3(1.0f, 1.0f, 1.0f), // M
 };
 
 int vertices_face_index[9][4]{
@@ -118,7 +118,7 @@ std::vector<Vector2> uv_type_delta = {
 	{0, 6},
 	{4, 6},
 	{8, 6},
-	{12, 12},
+	{12, 6},
 	{0, 12},
 	{4, 12},
 	{8, 12},

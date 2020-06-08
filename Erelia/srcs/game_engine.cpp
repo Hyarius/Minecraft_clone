@@ -41,6 +41,7 @@ bool Game_engine::handle_mouse()
 }	
 void Game_engine::render()
 {
+	glClear(GL_DEPTH_BUFFER_BIT);
 	if (_modes[_active_mode] != nullptr && _modes[_active_mode]->is_active() == true)
 		_modes[_active_mode]->render();
 }	

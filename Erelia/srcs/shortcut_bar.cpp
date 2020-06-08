@@ -3,6 +3,7 @@
 Shortcut_bar::Shortcut_bar(jgl::Widget* p_parent) : jgl::Widget(p_parent)
 {
 	_selected_item = nullptr;
+	_disable = false;
 	_shortcut_frame = new jgl::Frame(this);
 	_shortcut_frame->activate();
 	_item_slots.resize(9);
@@ -11,7 +12,6 @@ Shortcut_bar::Shortcut_bar(jgl::Widget* p_parent) : jgl::Widget(p_parent)
 		_item_slots[i] = new Item_slot(icon_tile, nullptr, _shortcut_frame);
 		_item_slots[i]->activate();
 	}
-
 	select_itemslot(0);
 }
 void Shortcut_bar::select_itemslot(size_t index)
@@ -75,6 +75,8 @@ void Shortcut_bar::set_geometry_imp(jgl::Vector2 p_anchor, jgl::Vector2 p_area)
 		_item_slots[i]->set_geometry(pos, size);
 		pos.x += delta;
 	}
+	_selected_item->set_state(false);
+	_selected_item->select();
 }
 
 void Shortcut_bar::render()

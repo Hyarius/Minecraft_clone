@@ -41,6 +41,10 @@ struct Debug_line
 	}
 	void create_text_image(size_t size)
 	{
+		if (content == "")
+			return ;
+		if (text_image != nullptr)
+			delete text_image;
 		text_image = get_string_image(content, size, 0, text_color);
 	}
 };
@@ -137,7 +141,8 @@ public:
 						int len = static_cast<int>(_line_order[type][i]->text_image->size().x);
 						pos.x = (_line_order[type][i]->align == jgl::alignment::right ? g_application->size().x - _begin_pos.x - len : g_application->size().x / 2 - len / 2);
 					}
-					_line_order[type][i]->text_image->draw(pos, _line_order[type][i]->text_image->size(), 1.0f, _viewport);
+					if (_line_order[type][i]->text_image != nullptr)
+						_line_order[type][i]->text_image->draw(pos, _line_order[type][i]->text_image->size(), 1.0f, _viewport);
 				}
 			}
 		}

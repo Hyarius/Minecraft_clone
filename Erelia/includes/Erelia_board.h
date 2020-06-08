@@ -14,11 +14,18 @@ private:
 
 public:
 	Board();
+	Board(jgl::String path);
+	void reload(jgl::String);
 
+	void empty_initialize();
+	void prepare_empty_chunk(jgl::Vector3 chunk_pos);
+
+	void set_block(Vector3 pos, int type);
 	void place_block(Vector3 pos, int type);
 	void remove_block(Vector3 pos);
 
 	void add_chunk(Vector3 chunk_pos);
+	void baking_chunk(jgl::Vector3 chunk_po);
 	void remove_chunk(Vector3 chunk_pos);
 
 	std::map<Vector3, Chunk*>& chunks() { return (_chunks); }
@@ -32,6 +39,8 @@ public:
 
 	void update();
 	void render(jgl::Camera* camera);
+
+	void save(std::fstream& file);
 };
 
 #endif

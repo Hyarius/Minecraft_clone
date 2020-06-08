@@ -223,6 +223,21 @@
     <ClCompile Include="srcs\editor_inventory_tab.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\tactical_controler.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\item_slot.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\saving_menu.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\loading_menu.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\Editor_visualizer.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Erelia.h">
@@ -408,6 +423,15 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_contener.h">
       <Filter>JGL\includes\widget</Filter>
     </ClInclude>
+    <ClInclude Include="includes\Erelia_tactical_controller.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Erelia_icon_holder.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_file_menu.h">
+      <Filter>JGL\includes\widget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="ressources\font\karma future.ttf">
@@ -460,8 +484,5 @@
     <Filter Include="JGL\srcs\structure">
       <UniqueIdentifier>{f37043c5-c3c7-4425-b81b-bfae292ebc0a}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ressources\maps\tmp.txt" />
   </ItemGroup>
 </Project>

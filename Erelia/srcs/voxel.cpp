@@ -122,8 +122,11 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 
 				for (size_t j = 0; j < 3; j++)
 				{
-					Vector3 tmp_pos = _rel_pos + voxel_vertices[vertices_face_index[face][face_index_order[index][j]]];
-					int tmp_index = tmp_pos.x * 2 + tmp_pos.y * 2 * (chunk_size.x * 2 + 1) + tmp_pos.z * 2 * ((chunk_size.x * 2 + 1) * (chunk_size.y * 2 + 1));
+					Vector3 tmp_pos = _rel_pos * Vector3(1, 0, 1) + voxel_vertices[vertices_face_index[face][face_index_order[index][j]]];
+					//std::cout << _rel_pos << " + " << voxel_vertices[vertices_face_index[face][face_index_order[index][j]]] << " = " << tmp_pos << std::endl;
+					tmp_pos *= 2.0f;
+					//std::cout << " * 2 -> " << tmp_pos << std::endl;
+					int tmp_index = tmp_pos.x + tmp_pos.z * (chunk_size.x * 2 + 1) + tmp_pos.y * ((chunk_size.x * 2 + 1) * (chunk_size.z * 2 + 1));
 					tmp_vertices_index[j] = tmp_index;
 					tmp_normales_index[j] = face;
 				}
@@ -136,4 +139,14 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 	}
 
 	return (result);
+}
+
+void Voxel::save(Vector3 delta, std::fstream& file)
+{
+	if (_type == -1)
+		return;
+
+	Vector3 final = _rel_pos + delta;
+	file << jgl::itoa(static_cast<int>(final.x)) << "/" << jgl::itoa(static_cast<int>(final.y)) << "/" << jgl::itoa(static_cast<int>(final.z)) << "/" << _type;
+	file << std::endl;
 }

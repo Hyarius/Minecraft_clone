@@ -31,19 +31,21 @@ void Editor_inventory::select_tab(size_t index)
 	_item_library[_selected_tab_index]->desactivate();
 	_selected_tab_index = index;
 	_item_library[index]->activate();
+	_item_library[index]->reset();
 }
 
-Editor_inventory::Editor_inventory(jgl::Widget* parent)
+Editor_inventory::Editor_inventory(jgl::Widget* parent) : jgl::Widget(parent)
 {
 	_selected_tab_index = 0;
 	_clicked_slot = nullptr;
-	_shortcut_bar = new Shortcut_bar(parent);
+	_shortcut_bar = new Shortcut_bar(this);
 	for (size_t i = 0; i < 9; i++)
+	{
 		_shortcut_bar->set_item(i, item_list[i]);
+	}
 	_shortcut_bar->activate();
-	_shortcut_bar->select_itemslot(0);
 
-	_inventory_frame = new jgl::Frame(parent);
+	_inventory_frame = new jgl::Frame(this);
 	_item_library.resize(static_cast<size_t>(Tab_type::count));
 	_library_button.resize(static_cast<size_t>(Tab_type::count));
 	for (size_t i = 0; i < _item_library.size(); i++)
@@ -54,6 +56,10 @@ Editor_inventory::Editor_inventory(jgl::Widget* parent)
 		_library_button[i]->activate();
 	}
 	select_tab(0);
+	
+	_icon_holder = new Icon_holder(icon_tile, this);
+	_icon_holder->send_back();
+	_icon_holder->activate();
 }
 
 Item_slot* Editor_inventory::find_shortcut_slot()
@@ -92,10 +98,22 @@ bool Editor_inventory::handle_keyboard()
 	if (jgl::get_key(jgl::key::tab) == jgl::key_state::release)
 	{
 		if (toggle() == false)
-			activate();
+		{
+			enable();
+		}
 		else
-			desactivate();
+		{
+			disable();
+		}
 		return (true);
+	}
+	if (jgl::get_key(jgl::key::escape) == jgl::key_state::release)
+	{
+		if (toggle() == true)
+		{
+			disable();
+			return (true);
+		}
 	}
 	return (false);
 }
@@ -116,10 +134,11 @@ bool Editor_inventory::handle_mouse()
 	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::pressed)
 	{
 		_clicked_slot = find_slot();
+		if (_clicked_slot != nullptr)
+			_icon_holder->set_item(_clicked_slot->item());
 	}
 	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::release)
 	{
-		std::cout << "Here 2" << std::endl;
 		Item_slot* tmp = find_shortcut_slot();
 		Item* clicked_item = (_clicked_slot == nullptr ? nullptr : _clicked_slot->item());
 		Item* tmp_item = (tmp == nullptr ? nullptr : tmp->item());
@@ -128,11 +147,12 @@ bool Editor_inventory::handle_mouse()
 		if (tmp != nullptr)
 			tmp->set_item(clicked_item);
 		_clicked_slot = nullptr;
+		_icon_holder->set_item(nullptr);
 	}
 	return (false);
 }
 
-void Editor_inventory::set_geometry(Vector2 p_anchor, Vector2 p_area)
+void Editor_inventory::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 {
 	Vector2 size = Vector2(Item_slot::size().x * 9 + 60, Item_slot::size().y + 20);
 	Vector2 pos = Vector2((g_application->size().x - size.x) / 2, g_application->size().y - size.y * 1.2f);
@@ -146,10 +166,10 @@ void Editor_inventory::set_geometry(Vector2 p_anchor, Vector2 p_area)
 	pos.x = (g_application->size().x - size.x) / 2;
 	pos.y = (pos.y - size.y) / 2;
 
-	_inventory_frame->set_geometry(pos, size);
+	_inventory_frame->set_geometry(pos, size + Vector2(20, 0));
 
 	Vector2 library_size = Vector2(
-		Item_slot::size().x * (library_nb_element.x) + 5 * (library_nb_element.x - 1) + 10,
+		Item_slot::size().x * (library_nb_element.x) + 5 * (library_nb_element.x - 1) + 30,
 		Item_slot::size().y * library_nb_element.y - 5 * (library_nb_element.y - 1)
 	);
 	Vector2 button_size = Item_slot::size();
@@ -163,23 +183,16 @@ void Editor_inventory::set_geometry(Vector2 p_anchor, Vector2 p_area)
 		);
 		_library_button[i]->set_geometry(button_pos, button_size);
 	}
+
+	_icon_holder->set_geometry(0, g_application->size());
+
+}
+
+void Editor_inventory::update()
+{
 }
 
 void Editor_inventory::render()
 {
-	if (clicked_slot() != nullptr && clicked_slot()->item() != nullptr)
-		icon_tile->draw_centred(clicked_slot()->item()->icon, g_mouse->pos, Item_slot::size() - 20);
-}
 
-void Editor_inventory::activate()
-{
-	_inventory_frame->activate();
-	_shortcut_bar->disable();
-}
-
-void Editor_inventory::desactivate()
-{
-	_inventory_frame->desactivate();
-	_shortcut_bar->enable();
-	_clicked_slot = nullptr;
 }
