@@ -8,11 +8,12 @@ void validate_load(jgl::Data param)
 	jgl::String extension = editor->loader_menu()->extension();
 	jgl::String path = base_path + param.acces<jgl::Text_entry*>(2)->text() + (extension == "*" ? "" : extension);
 
-	std::cout << "Load board from path [" << path << "]" << std::endl;
 	board->reload(path);
 	if (editor != nullptr)
 	{
 		editor->editor_contener()->activate();
+		editor->set_edited(true);
+		editor->contener()->set_frozen(false);
 		editor->loader_menu()->desactivate();
 		editor->echap_menu_frame()->desactivate();
 		editor->editor_inventory()->set_shortcut_frozen(false);
@@ -26,6 +27,8 @@ void cancel_load(jgl::Data param)
 	if (editor != nullptr)
 	{
 		editor->editor_contener()->activate();
+		editor->set_edited(true);
+		editor->contener()->set_frozen(false);
 		editor->loader_menu()->desactivate();
 		editor->echap_menu_frame()->desactivate();
 		editor->editor_inventory()->set_shortcut_frozen(false);

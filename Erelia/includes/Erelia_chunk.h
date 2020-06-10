@@ -28,6 +28,7 @@ public:
 	void place_block(Vector3 pos, int type);
 	Voxel**** voxels() { return (_voxels); }
 	Voxel* voxels(jgl::Vector3 tmp_pos);
+	Vector3 pos() { return (_pos); }
 	void save(std::fstream& file);
 };
 

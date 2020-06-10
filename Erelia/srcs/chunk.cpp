@@ -1,10 +1,10 @@
 #include "erelia.h"
 
-extern float block_alpha_array[12];
+extern std::vector<float> block_alpha_array;
 extern Vector3 voxel_neighbour[9];
 extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
-extern std::vector<Vector2> uv_type_delta;
+extern std::vector<Vector2> block_uv_delta;
 
 std::vector< std::vector< jgl::Vector3> > chunk_content_vertice;
 std::vector< std::vector< jgl::Vector2> > chunk_content_uvs;
@@ -61,9 +61,9 @@ void Chunk::init_mesh(jgl::Mesh *target)
 		}
 		if (chunk_content_uvs[level].size() == 0)
 		{
-			for (size_t type = 0; type < uv_type_delta.size(); type++)
+			for (size_t type = 0; type < block_uv_delta.size(); type++)
 				for (size_t i = 0; i < 35; i++)
-					chunk_content_uvs[level].push_back((_tileset == nullptr ? 1 : _tileset->unit()) * (voxel_uv[i] + uv_type_delta[type]));
+					chunk_content_uvs[level].push_back((_tileset == nullptr ? 1 : _tileset->unit()) * (voxel_uv[i] + block_uv_delta[type]));
 		}
 		if (chunk_content_normales[level].size() == 0)
 		{
@@ -86,7 +86,7 @@ bool Chunk::need_bake(Board* board, Vector3 p_pos)
 	for (size_t i = 3; i < 9; i++)
 	{
 		tmp_next = board->voxels(p_pos + voxel_neighbour[i]);
-		float tmp_alpha = (tmp_next == nullptr ? base_alpha : block_alpha_array[tmp_next->type()]);
+		float tmp_alpha = (tmp_next == nullptr || tmp_next->type() == -1 ? base_alpha : block_alpha_array[tmp_next->type()]);
 		if (tmp_next == nullptr || tmp_next->type() == -1 || tmp_alpha != base_alpha)
 			return (true);
 	}

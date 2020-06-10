@@ -15,6 +15,8 @@ void validate_save(jgl::Data param)
 	if (editor != nullptr)
 	{
 		editor->editor_contener()->activate();
+		editor->set_edited(true);
+		editor->contener()->set_frozen(false);
 		editor->saver_menu()->desactivate();
 		editor->echap_menu_frame()->desactivate();
 		editor->editor_inventory()->set_shortcut_frozen(false);
@@ -28,6 +30,8 @@ void cancel_save(jgl::Data param)
 	if (editor != nullptr)
 	{
 		editor->editor_contener()->activate();
+		editor->set_edited(true);
+		editor->contener()->set_frozen(false);
 		editor->saver_menu()->desactivate();
 		editor->echap_menu_frame()->desactivate();
 		editor->editor_inventory()->set_shortcut_frozen(false);

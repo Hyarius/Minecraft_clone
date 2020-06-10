@@ -15,12 +15,15 @@ void Board::empty_initialize()
 		}
 }
 
+jgl::Mesh *test = nullptr;
+
 Board::Board()
 {
 	_chunks.clear();
 	_entities.clear();
-	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(16, 18));
+	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(40, 30));
 	empty_initialize();
+	test = new jgl::Mesh("ressources/model/forest-rock.obj", Vector3(0.5f, 1.0f, 0.5f), 0, 1);
 }
 
 void Board::reload(jgl::String path)
@@ -48,12 +51,14 @@ void Board::reload(jgl::String path)
 		}
 	}
 	for (auto tmp : _chunks)
+	{
 		tmp.second->bake(this);
+	}
 }
 
 Board::Board(jgl::String path)
 {
-	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(16, 18));
+	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(40, 30));
 	reload(path);
 }
 
@@ -113,6 +118,8 @@ void Board::render(jgl::Camera *camera)
 		_entities[i]->render(camera);
 	for (auto tmp : _chunks)
 		tmp.second->render_transparent(camera);
+	if (test != nullptr)
+		test->render(camera);
 }
 
 void Board::update()
@@ -131,7 +138,7 @@ void Board::set_block(Vector3 pos, int type)
 		tmp_chunk = chunks(tmp_chunk_pos);
 	}
 	Vector3 voxel_pos = this->voxel_pos(pos);
-	if (voxels(voxel_pos) != nullptr)
+	if (voxels(pos) != nullptr)
 	{
 		tmp_chunk->place_block(voxel_pos, type);
 	}

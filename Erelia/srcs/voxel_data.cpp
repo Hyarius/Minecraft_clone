@@ -1,20 +1,5 @@
 #include "erelia.h"
 
-float block_alpha_array[12] = {
-	1.0f,
-	1.0f,
-	0.5f,
-	1.0f,
-	1.0f,
-	1.0f,
-	0.5f,
-	1.0f,
-	1.0f,
-	1.0f,
-	0.5f,
-	1.0f
-};
-
 Vector3 voxel_vertices[13]{
 	Vector3(0.0f, 0.0f, 0.0f), // A
 	Vector3(1.0f, 0.0f, 0.0f), // B
@@ -32,10 +17,10 @@ Vector3 voxel_vertices[13]{
 };
 
 int vertices_face_index[9][4]{
-	{7, 6, 5, 4}, // Up down left
-	{9, 7, 8, 5}, // Up down right
-	{12, 11, 9, 7}, // Up top right
-	{11, 10, 7, 6}, // Up top left
+	{9, 7, 8, 5}, // Up down left
+	{7, 6, 5, 4}, // Up down right
+	{11, 10, 7, 6}, // Up top right
+	{12, 11, 9, 7}, // Up top left
 	{1, 0, 3, 2}, // Down
 	{8, 4, 1, 0}, // Front
 	{10, 12, 2, 3}, // Back
@@ -110,21 +95,6 @@ Vector3 voxel_normales[9]{
 	{-1, 0, 0}
 };
 
-std::vector<Vector2> uv_type_delta = {
-	{0, 0},
-	{4, 0},
-	{8, 0},
-	{12, 0},
-	{0, 6},
-	{4, 6},
-	{8, 6},
-	{12, 6},
-	{0, 12},
-	{4, 12},
-	{8, 12},
-	{12, 12},
-};
-
 int  uvs_face_index[9][4] = {
 	{22, 32, 20, 30}, // Up down left
 	{24, 34, 22, 32}, // Up down right
@@ -142,36 +112,36 @@ int uvs_top_face_index[4][2][2][2][1]{
 		{ // A same type
 			{// B same type
 				{ // C same type
-					22
+					17
 				},
 				{ // C different type
-					21
+					27
 				},
 			},
 			{ // B different type
 				{ // C same type
-					8
+					7
 				},
 				{ // C different type
-					21
+					27
 				},
 			},
 		},
 		{ // A different type
 			{// B same type
 				{ // C same type
-					27
+					15
 				},
 				{ // C different type
-					26
+					25
 				},
 			},
 			{ // B different type
 				{ // C same type
-					27
+					15
 				},
 				{ // C different type
-					26
+					25
 				},
 			},
 		},
@@ -180,36 +150,36 @@ int uvs_top_face_index[4][2][2][2][1]{
 		{ // A same type
 			{// B same type
 				{ // C same type
-					23
+					16
 				},
 				{ // C different type
-					28
+					18
 				},
 			},
 			{ // B different type
 				{ // C same type
-					9
+					8
 				},
 				{ // C different type
-					28
+					18
 				},
 			},
 		},
 		{ // A different type
 			{// B same type
 				{ // C same type
-					24
+					26
 				},
 				{ // C different type
-					29
+					28
 				},
 			},
 			{ // B different type
 				{ // C same type
-					24
+					26
 				},
 				{ // C different type
-					29
+					28
 				},
 			},
 		},
@@ -218,36 +188,36 @@ int uvs_top_face_index[4][2][2][2][1]{
 		{ // A same type
 			{// B same type
 				{ // C same type
-					18
+					21
 				},
 				{ // C different type
-					19
+					11
 				},
 			},
 			{ // B different type
 				{ // C same type
-					4
+					3
 				},
 				{ // C different type
-					19
+					11
 				},
 			},
 		},
 		{ // A different type
 			{// B same type
 				{ // C same type
-					13
+					23
 				},
 				{ // C different type
-					14
+					13
 				},
 			},
 			{ // B different type
 				{ // C same type
-					13
+					23
 				},
 				{ // C different type
-					14
+					13
 				},
 			},
 		},
@@ -256,36 +226,36 @@ int uvs_top_face_index[4][2][2][2][1]{
 		{ // A same type
 			{// B same type
 				{ // C same type
-					17
+					22
 				},
 				{ // C different type
-					12
+					20
 				},
 			},
 			{ // B different type
 				{ // C same type
-					3
+					2
 				},
 				{ // C different type
-					12
+					20
 				},
 			},
 		},
 		{ // A different type
 			{// B same type
 				{ // C same type
-					16
+					12
 				},
 				{ // C different type
-					11
+					10
 				},
 			},
 			{ // B different type
 				{ // C same type
-					16
+					12
 				},
 				{ // C different type
-					11
+					10
 				},
 			},
 		},
@@ -294,29 +264,29 @@ int uvs_top_face_index[4][2][2][2][1]{
 
 Vector3 neightbour_compose_face[4][3]{
 	{// Up down left
-		{-1, 0, 0}, // Voxel A
-		{-1, 0, -1}, // Voxel B
-		{0, 0, -1}, // Voxel C
-	},
-	{// Up down right
 		{0, 0, -1}, // Voxel A
 		{1, 0, -1}, // Voxel B
 		{1, 0, 0}, // Voxel C
 	},
-	{// Up top right
-		{1, 0, 0}, // Voxel A
-		{1, 0, 1}, // Voxel B
-		{0, 0, 1}, // Voxel C
+	{// Up down right
+		{-1, 0, 0}, // Voxel A
+		{-1, 0, -1}, // Voxel B
+		{0, 0, -1}, // Voxel C
 	},
-	{// Up top left
+	{// Up top right
 		{0, 0, 1}, // Voxel A
 		{-1, 0, 1}, // Voxel B
 		{-1, 0, 0}, // Voxel C
 	},
+	{// Up top left
+		{1, 0, 0}, // Voxel A
+		{1, 0, 1}, // Voxel B
+		{0, 0, 1}, // Voxel C
+	},
 };
 
 int delta_face_index[2][3]{
-	{0, -1, 5},
-	{5, -1, 4}
+	{0, 1, 5},
+	{5, 1, 6}
 };
 

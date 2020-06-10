@@ -59,9 +59,13 @@ protected:
 	Uint32 _actual_tick;
 	Uint32 _timer;
 	Uint32 _delta_time;
+	bool _edited;
 
 public:
 	Editor_mode(class Game_engine* p_engine, Board* p_board);
+
+	bool edited() { return (_edited); }
+	void set_edited(bool p_state) { _edited = p_state; _timer = _actual_tick + _delta_time; }
 
 	void create_editor_panel();
 	void create_saver_panel();
@@ -74,6 +78,7 @@ public:
 
 	bool voxel_raycast(Vector3 pos, Vector3 direction, Vector3* voxel_source, Vector3* voxel_target);
 	void handle_multibloc_pos(Vector3 A, Vector3 B, int type);
+	void handle_change_block(Vector3 A, Vector3 B, int type);
 	Editor_inventory* editor_inventory() { return (_editor_inventory); }
 	jgl::Frame* echap_menu_frame() { return (_echap_menu_frame); }
 

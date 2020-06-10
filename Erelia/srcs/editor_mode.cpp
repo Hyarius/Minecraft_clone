@@ -6,6 +6,7 @@ void save_map(jgl::Data param)
 
 	if (editor != nullptr)
 	{
+		editor->contener()->set_frozen(true);
 		editor->editor_contener()->desactivate();
 		editor->saver_menu()->activate();
 		editor->saver_menu()->actualize_files();
@@ -18,6 +19,7 @@ void load_map(jgl::Data param)
 
 	if (editor != nullptr)
 	{
+		editor->contener()->set_frozen(true);
 		editor->editor_contener()->desactivate();
 		editor->loader_menu()->activate();
 		editor->loader_menu()->actualize_files();
@@ -42,6 +44,7 @@ void save_quit_editor(jgl::Data param)
 
 Editor_mode::Editor_mode(Game_engine* p_engine, Board* p_board) : Game_mode(p_engine)
 {
+	_edited = false;
 	_engine = p_engine;
 	_board = p_board;
 	_voxel_source = -1;
@@ -154,6 +157,31 @@ bool Editor_mode::voxel_raycast(Vector3 pos, Vector3 direction, Vector3* voxel_s
 	}
 }
 
+void Editor_mode::handle_change_block(Vector3 A, Vector3 B, int type)
+{
+	std::vector<jgl::Vector3> chunk_pos_list;
+
+	Vector3 start = Vector3(min(A.x, B.x), min(A.y, B.y), min(A.z, B.z));
+	Vector3 end = Vector3(max(A.x, B.x), max(A.y, B.y), max(A.z, B.z));
+
+	for (int i = static_cast<int>(start.x); i <= static_cast<int>(end.x); i++)
+		for (int j = static_cast<int>(start.y); j <= static_cast<int>(end.y); j++)
+			for (int k = static_cast<int>(start.z); k <= static_cast<int>(end.z); k++)
+			{
+				Vector3 voxel_pos = Vector3(i, j, k);
+				Vector3 chunk_pos = _board->chunk_pos(voxel_pos);
+				if (_board->voxels(voxel_pos) != nullptr && _board->voxels(voxel_pos)->type() != -1 && _board->voxels(voxel_pos)->type() != type)
+				{
+					if (std::find(chunk_pos_list.begin(), chunk_pos_list.end(), chunk_pos) == chunk_pos_list.end())
+						chunk_pos_list.push_back(chunk_pos);
+					_board->set_block(voxel_pos, type);
+				}
+			}
+
+	for (size_t i = 0; i < chunk_pos_list.size(); i++)
+		_board->baking_chunk(chunk_pos_list[i]);
+}
+
 void Editor_mode::handle_multibloc_pos(Vector3 A, Vector3 B, int type)
 {
 	std::vector<jgl::Vector3> chunk_pos_list;
@@ -176,7 +204,7 @@ void Editor_mode::handle_multibloc_pos(Vector3 A, Vector3 B, int type)
 			}
 
 	for (size_t i = 0; i < chunk_pos_list.size(); i++)
-		_board->chunks(chunk_pos_list[i])->bake(_board);
+		_board->baking_chunk(chunk_pos_list[i]);
 
 }
 
@@ -190,6 +218,8 @@ void Editor_mode::update()
 		-1
 	};
 	_actual_tick = g_application->time();
+	if (_edited == true && _timer < _actual_tick)
+		_edited = false;
 	_debug_screen->set_text(0, "FPS : " + jgl::itoa(print_fps));
 	if (_controller->camera()->pos() != old_value[0])
 	{
@@ -220,6 +250,8 @@ void Editor_mode::update()
 
 bool Editor_mode::handle_keyboard()
 {
+	if (_edited == true)
+		return (false);
 	if (_editor_inventory->toggle() == true)
 		return (true);
 
@@ -237,8 +269,11 @@ bool Editor_mode::handle_keyboard()
 
 	return (false);
 }
+
 bool Editor_mode::handle_mouse()
 {
+	if (_edited == true)
+		return (false);
 	if (_editor_inventory->is_frozen() == true)
 		return (true);
 	if (_editor_inventory->toggle() == true || _editor_inventory->shortcut_bar()->is_pointed() == true)
@@ -251,14 +286,25 @@ bool Editor_mode::handle_mouse()
 		raycast_state = voxel_raycast(_controller->camera()->pos(), _controller->camera()->mouse_direction(), &_voxel_source, &_voxel_target);
 	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::pressed)
 	{
-		_first_voxel = _voxel_target;
-		_second_voxel = _voxel_target;
+		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
+		{
+			_first_voxel = _voxel_target;
+			_second_voxel = _voxel_target;
+		}
+		else
+		{
+			_first_voxel = _voxel_source;
+			_second_voxel = _voxel_source;
+		}
 		_visualizer->set_voxels(_first_voxel, _second_voxel);
 		_visualizer->recalculate();
 	}
 	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::down)
 	{
-		_second_voxel = _voxel_target;
+		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
+			_second_voxel = _voxel_target;
+		else
+			_second_voxel = _voxel_source;
 		_visualizer->set_voxels(_first_voxel, _second_voxel);
 		_visualizer->recalculate();
 	}
@@ -266,17 +312,13 @@ bool Editor_mode::handle_mouse()
 	{
 		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
 		{
-			if (_editor_inventory->selected_item() != nullptr && _editor_inventory->selected_item()->item() != nullptr)
+			if (_editor_inventory->selected_item() != nullptr && _editor_inventory->selected_item()->item() != nullptr && _editor_inventory->selected_item()->item()->type == item_type::block)
 				handle_multibloc_pos(_first_voxel, _second_voxel, static_cast<Block_item*>(_editor_inventory->selected_item()->item())->block_id);
 		}
 		else
 		{
-			if (raycast_state == true)
-			{
-				Vector3 chunk_pos = _board->chunk_pos(_voxel_source);
-				_board->remove_chunk(chunk_pos);
-				_timer = _actual_tick + _delta_time;
-			}
+			if (_editor_inventory->selected_item() != nullptr && _editor_inventory->selected_item()->item() != nullptr && _editor_inventory->selected_item()->item()->type == item_type::block)
+				handle_change_block(_first_voxel, _second_voxel, static_cast<Block_item*>(_editor_inventory->selected_item()->item())->block_id);
 		}
 		_first_voxel = 0;
 		_second_voxel = 0;

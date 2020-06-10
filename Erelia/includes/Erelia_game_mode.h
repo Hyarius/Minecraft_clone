@@ -13,6 +13,8 @@ protected:
 public:
 	Game_mode(class Game_engine* p_engine);
 	
+	jgl::Contener* contener() {	return (_contener);}
+
 	void set_active(bool p_state) { _contener->set_active(p_state); }
 	void activate() { _contener->activate(); }
 	void desactivate() { _contener->desactivate(); }

@@ -3,23 +3,6 @@
 
 #include "jgl.h"
 
-enum class Item_id
-{
-	grass = 0,
-	dirt = 1,
-	deep_water = 2,
-	snow = 3,
-	forest_grass = 4,
-	dust = 5,
-	water = 6,
-	stone = 7,
-	haunted_forest_grass = 8,
-	sand = 9,
-	coast_water = 10,
-	dark_stone = 11,
-	count
-};
-
 enum class item_type
 {
 	error = -1,
@@ -50,11 +33,9 @@ struct Block_item : public Item
 	jgl::String str() { return ("Name : " + name + " / id : " + jgl::itoa(id)); }
 };
 
-extern jgl::Sprite_sheet* icon_tile;
-extern Item** item_list;
-extern jgl::String items_name[];
-extern Vector2 items_icon[];
-
 Item* get_item(int index);
+
+extern jgl::Sprite_sheet* icon_tile;
+extern std::vector<Item*> item_list;
 
 #endif

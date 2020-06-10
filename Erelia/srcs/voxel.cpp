@@ -6,12 +6,12 @@ extern Vector3 voxel_neighbour[9];
 extern int face_index_order[2][3];
 extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
-extern std::vector<Vector2> uv_type_delta;
+extern std::vector<Vector2> block_uv_delta;
 extern int  uvs_face_index[9][4];
 extern int uvs_top_face_index[4][2][2][2][1];
 extern Vector3 neightbour_compose_face[4][3];
 extern int delta_face_index[2][3];
-extern float block_alpha_array[12];
+extern std::vector<float> block_alpha_array;
 
 Voxel::Voxel(Vector3 p_rel_pos, int p_type, Entity* p_entity)
 {
@@ -33,7 +33,7 @@ void Voxel::add_voxel_comp(jgl::Sprite_sheet *tileset, jgl::Mesh* target)
 		target->add_normale(voxel_normales[i]);
 	for (size_t i = 0; i < 35; i++)
 	{
-		target->add_uv((voxel_uv[i] + uv_type_delta[_type]) * (tileset == nullptr ? 0 : tileset->unit()));
+		target->add_uv((voxel_uv[i] + block_uv_delta[_type]) * (tileset == nullptr ? 0 : tileset->unit()));
 	}
 }
 
@@ -43,7 +43,7 @@ void Voxel::edit_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target)
 
 	for (size_t i = 0; i < 35; i++)
 	{
-		tmp[i] = ((voxel_uv[i] + uv_type_delta[_type]) * (tileset == nullptr ? 0 : tileset->unit()));
+		tmp[i] = ((voxel_uv[i] + block_uv_delta[_type]) * (tileset == nullptr ? 0 : tileset->unit()));
 	}
 }
 
@@ -110,7 +110,7 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 	{
 		Vector3 tmp_next = self_pos + voxel_neighbour[face];
 		Voxel* tmp_voxel = board->voxels(tmp_next);
-		float tmp_alpha = (tmp_voxel == nullptr ? base_alpha : block_alpha_array[tmp_voxel->type()]);
+		float tmp_alpha = (tmp_voxel == nullptr || tmp_voxel->type()  == -1 ? base_alpha : block_alpha_array[tmp_voxel->type()]);
 
 		if (tmp_voxel == nullptr || tmp_voxel->type() == -1 || tmp_alpha != base_alpha)
 		{
@@ -123,9 +123,7 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 				for (size_t j = 0; j < 3; j++)
 				{
 					Vector3 tmp_pos = _rel_pos * Vector3(1, 0, 1) + voxel_vertices[vertices_face_index[face][face_index_order[index][j]]];
-					//std::cout << _rel_pos << " + " << voxel_vertices[vertices_face_index[face][face_index_order[index][j]]] << " = " << tmp_pos << std::endl;
 					tmp_pos *= 2.0f;
-					//std::cout << " * 2 -> " << tmp_pos << std::endl;
 					int tmp_index = tmp_pos.x + tmp_pos.z * (chunk_size.x * 2 + 1) + tmp_pos.y * ((chunk_size.x * 2 + 1) * (chunk_size.z * 2 + 1));
 					tmp_vertices_index[j] = tmp_index;
 					tmp_normales_index[j] = face;

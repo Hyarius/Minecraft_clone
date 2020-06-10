@@ -1,13 +1,7 @@
 #include "erelia.h"
 
-
 Game_engine::Game_engine(jgl::Widget * p_parent) : jgl::Widget(p_parent)
 {
-	item_list = new Item * [static_cast<size_t>(Item_id::count)];
-	for (size_t i = 0; i < static_cast<size_t>(Item_id::count); i++)
-	{
-		item_list[i] = new Block_item(items_name[i], i, items_icon[i], i);
-	}
 	if (icon_tile == nullptr)
 		icon_tile = new jgl::Sprite_sheet("ressources/texture/icon_tileset.png", Vector2(10, 10));
 	_board = new Board();
