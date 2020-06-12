@@ -3,6 +3,8 @@
 
 #include "jgl.h"
 
+#include "erelia_scenery.h"
+
 enum class item_type
 {
 	error = -1,
@@ -19,8 +21,9 @@ struct Item
 
 	Item(jgl::String p_name = "unknow object", int p_id = -1, Vector2 p_icon = -1);
 
+	virtual jgl::String str() { return ("Name : " + name + " / id : " + jgl::itoa(id)); }
+
 	virtual void use(jgl::Data data = nullptr) = 0;
-	virtual jgl::String str() = 0;
 };
 
 struct Block_item : public Item
@@ -30,12 +33,23 @@ struct Block_item : public Item
 	Block_item(jgl::String p_name, int p_id, Vector2 p_icon, int p_block_id);
 
 	void use(jgl::Data data = nullptr);
-	jgl::String str() { return ("Name : " + name + " / id : " + jgl::itoa(id)); }
+};
+
+struct Scenery_item : public Item
+{
+	int scenery_id;
+
+	Scenery_item(jgl::String p_name, int p_id, Vector2 p_icon, int p_scenery_id);
+	void use(jgl::Data data = nullptr);
 };
 
 Item* get_item(int index);
 
 extern jgl::Sprite_sheet* icon_tile;
-extern std::vector<Item*> item_list;
+
+#define NB_ITEM 256
+#define NB_BLOCK 50
+
+extern Item* item_list[NB_ITEM];
 
 #endif

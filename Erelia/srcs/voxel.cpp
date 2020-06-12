@@ -13,11 +13,12 @@ extern Vector3 neightbour_compose_face[4][3];
 extern int delta_face_index[2][3];
 extern std::vector<float> block_alpha_array;
 
-Voxel::Voxel(Vector3 p_rel_pos, int p_type, Entity* p_entity)
+Voxel::Voxel(Vector3 p_rel_pos, int p_type)
 {
 	_rel_pos = p_rel_pos;
 	_type = p_type;
-	_entity = p_entity;
+	_entity = nullptr;
+	_scenery = nullptr;
 }
 
 #define IDENTICAL 0

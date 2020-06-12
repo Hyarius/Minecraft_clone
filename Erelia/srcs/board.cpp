@@ -15,15 +15,17 @@ void Board::empty_initialize()
 		}
 }
 
-jgl::Mesh *test = nullptr;
-
 Board::Board()
 {
 	_chunks.clear();
 	_entities.clear();
 	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(40, 30));
 	empty_initialize();
-	test = new jgl::Mesh("ressources/model/forest-rock.obj", Vector3(0.5f, 1.0f, 0.5f), 0, 1);
+
+	for (size_t i = 0; i < NB_SCENERY; i++)
+	{
+		place_scenery(jgl::Vector3(i % 9, size_t(0), i / 9), scenery_list[i]);
+	}
 }
 
 void Board::reload(jgl::String path)
@@ -118,8 +120,6 @@ void Board::render(jgl::Camera *camera)
 		_entities[i]->render(camera);
 	for (auto tmp : _chunks)
 		tmp.second->render_transparent(camera);
-	if (test != nullptr)
-		test->render(camera);
 }
 
 void Board::update()
@@ -175,6 +175,26 @@ void Board::place_block(Vector3 pos, int type)
 void Board::remove_block(Vector3 pos)
 {
 	place_block(pos, -1);
+}
+
+void Board::place_scenery(jgl::Vector3 pos, Scenery* p_scenery)
+{
+	Vector3 tmp_chunk_pos = chunk_pos(pos);
+	Chunk* tmp_chunk = chunks(tmp_chunk_pos);
+
+	if (tmp_chunk == nullptr)
+	{
+		add_chunk(tmp_chunk_pos);
+		tmp_chunk = chunks(tmp_chunk_pos);
+	}
+	Vector3 voxel_pos = this->voxel_pos(pos);
+	if (voxels(voxel_pos) != nullptr)
+		tmp_chunk->place_scenery(voxel_pos, p_scenery);
+}
+
+void Board::remove_scenery(jgl::Vector3 pos)
+{
+	place_scenery(pos, nullptr);
 }
 
 Chunk* Board::chunks(Vector3 chunk_pos)

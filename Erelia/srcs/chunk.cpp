@@ -28,7 +28,7 @@ Chunk::Chunk(jgl::Sprite_sheet* p_tileset, Vector3 p_pos)
 			for (int k = 0; k < chunk_size.z; k++)
 			{
 				Vector3 tmp = Vector3(i, j, k);
-				_voxels[i][j][k] = new Voxel(tmp, -1, nullptr);
+				_voxels[i][j][k] = new Voxel(tmp, -1);
 			}
 		}
 	}
@@ -168,6 +168,20 @@ void Chunk::bake(Board* board)
 void Chunk::render(jgl::Camera* camera)
 {
 	_mesh->render_differed(camera, _pos * chunk_size);
+	for (int i = 0; i < chunk_size.x; i++)
+	{
+		for (int j = 0; j < chunk_size.y; j++)
+		{
+			for (int k = 0; k < chunk_size.z; k++)
+			{
+				Voxel* tmp = _voxels[i][j][k];
+				if (tmp->scenery() != nullptr)
+				{
+					tmp->scenery()->render(camera, _pos * chunk_size + Vector3(i, j, k) + Vector3(0.5f, 1.0f, 0.5f));
+				}
+			}
+		}
+	}
 }
 
 void Chunk::render_transparent(jgl::Camera* camera)
@@ -185,6 +199,18 @@ void Chunk::place_block(Vector3 pos, int type)
 	int z = static_cast<int>(floor(pos.z));
 
 	_voxels[x][y][z]->set_type(type);
+}
+
+void Chunk::place_scenery(jgl::Vector3 pos, Scenery* p_scenery)
+{
+	if (pos.x < 0 || pos.x >= chunk_size.x || pos.y < 0 || pos.y >= chunk_size.y || pos.z < 0 || pos.z >= chunk_size.z)
+		return;
+
+	int x = static_cast<int>(floor(pos.x));
+	int y = static_cast<int>(floor(pos.y));
+	int z = static_cast<int>(floor(pos.z));
+
+	_voxels[x][y][z]->set_scenery(p_scenery);
 }
 
 Voxel* Chunk::voxels(Vector3 tmp_pos)

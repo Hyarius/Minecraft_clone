@@ -26,6 +26,7 @@ public:
 	void render(jgl::Camera* camera);
 	void render_transparent(jgl::Camera *camera);
 	void place_block(Vector3 pos, int type);
+	void place_scenery(jgl::Vector3 pos, Scenery* p_scenery);
 	Voxel**** voxels() { return (_voxels); }
 	Voxel* voxels(jgl::Vector3 tmp_pos);
 	Vector3 pos() { return (_pos); }

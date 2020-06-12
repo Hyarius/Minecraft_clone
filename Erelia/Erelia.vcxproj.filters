@@ -238,6 +238,12 @@
     <ClCompile Include="srcs\Editor_visualizer.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\scenery_data.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\item_list.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Erelia.h">
@@ -431,6 +437,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_file_menu.h">
       <Filter>JGL\includes\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\erelia_scenery.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_array.h">
+      <Filter>JGL\includes\structure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

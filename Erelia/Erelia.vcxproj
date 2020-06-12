@@ -90,10 +90,12 @@
     <ClCompile Include="srcs\game_mode.cpp" />
     <ClCompile Include="srcs\items.cpp" />
     <ClCompile Include="srcs\item_data.cpp" />
+    <ClCompile Include="srcs\item_list.cpp" />
     <ClCompile Include="srcs\item_slot.cpp" />
     <ClCompile Include="srcs\loading_menu.cpp" />
     <ClCompile Include="srcs\main.cpp" />
     <ClCompile Include="srcs\saving_menu.cpp" />
+    <ClCompile Include="srcs\scenery_data.cpp" />
     <ClCompile Include="srcs\shortcut_bar.cpp" />
     <ClCompile Include="srcs\tactical_controler.cpp" />
     <ClCompile Include="srcs\voxel_data.cpp" />
@@ -115,6 +117,7 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\jgl_log_handler.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\jgl_text.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_application.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_array.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_camera.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_color.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_data.h" />
@@ -160,6 +163,7 @@
     <ClInclude Include="includes\Erelia_game_mode.h" />
     <ClInclude Include="includes\Erelia_item.h" />
     <ClInclude Include="includes\Erelia_item_slot.h" />
+    <ClInclude Include="includes\erelia_scenery.h" />
     <ClInclude Include="includes\Erelia_shortcut_bar.h" />
     <ClInclude Include="includes\Erelia_tactical_controller.h" />
     <ClInclude Include="includes\Erelia_voxel.h" />
