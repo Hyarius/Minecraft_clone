@@ -3,13 +3,13 @@
 Game_engine::Game_engine(jgl::Widget * p_parent) : jgl::Widget(p_parent)
 {
 	create_item_list();
+	exit(1);
 	if (icon_tile == nullptr)
 		icon_tile = new jgl::Sprite_sheet("ressources/texture/icon_tileset.png", Vector2(10, 13));
 	_board = new Board();
 	_active_mode = 0;
 	_modes[0] = new Editor_mode(this, _board);
 	_modes[0]->activate();
-	exit(0);
 }
 
 void Game_engine::update()

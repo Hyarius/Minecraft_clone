@@ -81,7 +81,7 @@ bool Tactical_controller::handle_mouse()
 {
 	if (jgl::get_button(jgl::mouse_button::middle) == jgl::mouse_state::down)
 	{
-		rotate_camera(static_cast<int>(g_mouse->rel_pos.x), static_cast<int>(g_mouse->rel_pos.y));
+		rotate_camera(static_cast<int>(g_mouse->rel_pos.x / 2), static_cast<int>(g_mouse->rel_pos.y / 2));
 		return (true);
 	}
 	if (g_mouse->wheel != 0 && jgl::get_key(jgl::key::left_control) == jgl::key_state::down)
