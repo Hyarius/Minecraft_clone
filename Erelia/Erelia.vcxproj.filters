@@ -79,9 +79,6 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_shader_handler.cpp">
       <Filter>JGL\srcs\structure</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_string.cpp">
-      <Filter>JGL\srcs\structure</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_tileset.cpp">
       <Filter>JGL\srcs\structure</Filter>
     </ClCompile>
@@ -244,6 +241,15 @@
     <ClCompile Include="srcs\item_list.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_unique_string.cpp">
+      <Filter>JGL\srcs\structure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_string.cpp">
+      <Filter>JGL\srcs\structure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_pool.cpp">
+      <Filter>JGL\srcs\structure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Erelia.h">
@@ -313,9 +319,6 @@
       <Filter>JGL\includes\structure</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_plot.h">
-      <Filter>JGL\includes\structure</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_string.h">
       <Filter>JGL\includes\structure</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_system.h">
@@ -442,6 +445,18 @@
       <Filter>Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_array.h">
+      <Filter>JGL\includes\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_pool.h">
+      <Filter>JGL\includes\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_unique_string.h">
+      <Filter>JGL\includes\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_string.h">
+      <Filter>JGL\includes\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_reference_count.h">
       <Filter>JGL\includes\structure</Filter>
     </ClInclude>
   </ItemGroup>

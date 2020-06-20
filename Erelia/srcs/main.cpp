@@ -1,6 +1,4 @@
 #include "erelia.h"
-#include <tuple>
-#include <functional>
 
 int main(int argc, char **argv)
 {

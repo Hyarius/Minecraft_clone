@@ -125,7 +125,7 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 				{
 					Vector3 tmp_pos = _rel_pos * Vector3(1, 0, 1) + voxel_vertices[vertices_face_index[face][face_index_order[index][j]]];
 					tmp_pos *= 2.0f;
-					int tmp_index = tmp_pos.x + tmp_pos.z * (chunk_size.x * 2 + 1) + tmp_pos.y * ((chunk_size.x * 2 + 1) * (chunk_size.z * 2 + 1));
+					int tmp_index = static_cast<int>(tmp_pos.x + tmp_pos.z * (chunk_size.x * 2 + 1) + tmp_pos.y * ((chunk_size.x * 2 + 1) * (chunk_size.z * 2 + 1)));
 					tmp_vertices_index[j] = tmp_index;
 					tmp_normales_index[j] = face;
 				}

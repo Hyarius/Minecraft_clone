@@ -2,6 +2,8 @@
 #define ERELIA_H
 
 #include "jgl.h"
+#include <tuple>
+#include <functional>
 
 using jgl::Vector2;
 using jgl::Vector3;

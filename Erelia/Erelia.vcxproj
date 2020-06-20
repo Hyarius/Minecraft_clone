@@ -47,8 +47,10 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_mouse.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_pixel.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_plot.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_pool.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_shader_handler.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_string.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_unique_string.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_tileset.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_vector2.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_vector3.cpp" />
@@ -128,7 +130,10 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_matrix.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_mesh.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_plot.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_pool.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_reference_count.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_string.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_unique_string.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_system.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_tileset.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_vector.h" />
