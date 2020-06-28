@@ -43,7 +43,7 @@ void Board::reload(jgl::String path)
 			jgl::String line = jgl::get_str(input_file);
 			if (line == "")
 				break;
-			std::vector<jgl::String> tab = jgl::strsplit(line, "/");
+			jgl::Array<jgl::String> tab = jgl::strsplit(line, "/");
 			if (tab.size() < 4)
 				jgl::error_exit(1, "Map content corrupted at line [" + jgl::itoa(i) + "]");
 			jgl::Vector3 pos = jgl::Vector3(stoi(tab[0]), stoi(tab[1]), stoi(tab[2]));

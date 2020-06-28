@@ -81,27 +81,69 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_text_entry_component.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_value_component.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_value_entry_component.cpp" />
-    <ClCompile Include="srcs\board.cpp" />
-    <ClCompile Include="srcs\chunk.cpp" />
-    <ClCompile Include="srcs\editor_inventory.cpp" />
-    <ClCompile Include="srcs\editor_inventory_tab.cpp" />
-    <ClCompile Include="srcs\Editor_visualizer.cpp" />
-    <ClCompile Include="srcs\entity.cpp" />
-    <ClCompile Include="srcs\editor_mode.cpp" />
-    <ClCompile Include="srcs\game_engine.cpp" />
-    <ClCompile Include="srcs\game_mode.cpp" />
-    <ClCompile Include="srcs\items.cpp" />
-    <ClCompile Include="srcs\item_data.cpp" />
-    <ClCompile Include="srcs\item_list.cpp" />
-    <ClCompile Include="srcs\item_slot.cpp" />
-    <ClCompile Include="srcs\loading_menu.cpp" />
-    <ClCompile Include="srcs\main.cpp" />
-    <ClCompile Include="srcs\saving_menu.cpp" />
-    <ClCompile Include="srcs\scenery_data.cpp" />
-    <ClCompile Include="srcs\shortcut_bar.cpp" />
-    <ClCompile Include="srcs\tactical_controler.cpp" />
-    <ClCompile Include="srcs\voxel_data.cpp" />
-    <ClCompile Include="srcs\voxel.cpp" />
+    <ClCompile Include="srcs\board.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\chunk.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\editor_inventory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\editor_inventory_tab.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\Editor_visualizer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\entity.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\editor_mode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\game_engine.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\game_mode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\items.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\item_data.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\item_list.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\item_slot.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\loading_menu.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\saving_menu.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\scenery_data.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\shortcut_bar.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\tactical_controler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\voxel_data.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="srcs\voxel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\jgl.h" />
@@ -233,8 +275,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>includes;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
+    <LibraryPath>$(LibraryPath);C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

@@ -229,6 +229,14 @@ void create_item_list()
 	}
 }
 
+void delete_item_list()
+{
+	delete_scenery_list();
+
+	for (int i = 0; i < NB_BLOCK + NB_SCENERY; i++)
+		delete item_list[i];
+}
+
 Item* get_item(int index)
 {
 	if (index >= NB_ITEM || index < 0)

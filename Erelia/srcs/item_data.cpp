@@ -4,7 +4,7 @@ jgl::Vector2 Item_slot::_size = 80;
 
 jgl::Sprite_sheet* icon_tile = nullptr;
 
-std::vector<float> block_alpha_array = {
+jgl::Array<float> block_alpha_array = {
 	1.0f, // 0 / 0
 	1.0f, // 1 / 0
 	1.0f, // 2 / 0
@@ -57,7 +57,7 @@ std::vector<float> block_alpha_array = {
 	1.0f, // 9 / 4
 };
 
-std::vector<Vector2> block_uv_delta = {
+jgl::Array<Vector2> block_uv_delta = {
 	{0, 0},
 	{4, 0},
 	{8, 0},

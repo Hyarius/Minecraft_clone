@@ -49,7 +49,7 @@ Editor_mode::Editor_mode(Game_engine* p_engine, Board* p_board) : Game_mode(p_en
 	_board = p_board;
 	_voxel_source = -1;
 	_voxel_target = -1;
-	_actual_tick = g_application->time();
+	_actual_tick = g_time;
 	_timer = _actual_tick;
 	_delta_time = 150;
 	create_editor_panel();
@@ -217,7 +217,7 @@ void Editor_mode::update()
 		-1,
 		-1
 	};
-	_actual_tick = g_application->time();
+	_actual_tick = g_time;
 	if (_edited == true && _timer < _actual_tick)
 		_edited = false;
 	_debug_screen->set_text(0, "FPS : " + jgl::itoa(print_fps));

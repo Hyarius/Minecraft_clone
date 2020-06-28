@@ -14,6 +14,7 @@ private:
 
 public:
 	Game_engine(jgl::Widget* p_parent = nullptr);
+	~Game_engine();
 
 	Board* board() { return (_board); }
 
@@ -25,6 +26,8 @@ public:
 };
 
 void create_scenery_list();
+void delete_scenery_list();
 void create_item_list();
+void delete_item_list();
 
 #endif

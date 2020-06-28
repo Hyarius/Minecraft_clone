@@ -75,6 +75,15 @@ jgl::Vector3 scenery_start_size[NB_SCENERY] = {
 void create_scenery_list()
 {
 	for (size_t i = 0; i < NB_SCENERY; i++)
+	{
 		scenery_list[i] = new Scenery(i, new jgl::Mesh(scenery_path_list[i], scenery_delta_pos[i], 0, 1), scenery_start_size[i]);
-	
+	}
+}
+
+void delete_scenery_list()
+{
+	for (size_t i = 0; i < NB_SCENERY; i++)
+	{
+		delete scenery_list[i];
+	}
 }

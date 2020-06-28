@@ -6,12 +6,12 @@ extern Vector3 voxel_neighbour[9];
 extern int face_index_order[2][3];
 extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
-extern std::vector<Vector2> block_uv_delta;
+extern jgl::Array<Vector2> block_uv_delta;
 extern int  uvs_face_index[9][4];
 extern int uvs_top_face_index[4][2][2][2][1];
 extern Vector3 neightbour_compose_face[4][3];
 extern int delta_face_index[2][3];
-extern std::vector<float> block_alpha_array;
+extern jgl::Array<float> block_alpha_array;
 
 Voxel::Voxel(Vector3 p_rel_pos, int p_type)
 {
@@ -40,7 +40,7 @@ void Voxel::add_voxel_comp(jgl::Sprite_sheet *tileset, jgl::Mesh* target)
 
 void Voxel::edit_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target)
 {
-	std::vector<Vector2>& tmp = target->control_part(0)->uvs();
+	jgl::Array<Vector2>& tmp = target->control_part(0)->uvs();
 
 	for (size_t i = 0; i < 35; i++)
 	{

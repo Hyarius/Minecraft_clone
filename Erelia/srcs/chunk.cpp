@@ -1,14 +1,14 @@
 #include "erelia.h"
 
-extern std::vector<float> block_alpha_array;
+extern jgl::Array<float> block_alpha_array;
 extern Vector3 voxel_neighbour[9];
 extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
-extern std::vector<Vector2> block_uv_delta;
+extern jgl::Array<Vector2> block_uv_delta;
 
-std::vector< std::vector< jgl::Vector3> > chunk_content_vertice;
-std::vector< std::vector< jgl::Vector2> > chunk_content_uvs;
-std::vector< std::vector< jgl::Vector3> > chunk_content_normales;
+jgl::Array< jgl::Array< jgl::Vector3> > chunk_content_vertice;
+jgl::Array< jgl::Array< jgl::Vector2> > chunk_content_uvs;
+jgl::Array< jgl::Array< jgl::Vector3> > chunk_content_normales;
 
 jgl::Mesh* tmp_cube = nullptr;
 Vector3 chunk_size = Vector3(9, 20, 9);
@@ -70,10 +70,11 @@ void Chunk::init_mesh(jgl::Mesh *target)
 			for (size_t i = 0; i < 9; i++)
 				chunk_content_normales[level].push_back(voxel_normales[i]);
 		}
-		jgl::Mesh_part* part = target->check_part(level);
-		part->set_vertices(chunk_content_vertice[level]);
-		part->set_uvs(chunk_content_uvs[level]);
-		part->set_normales(chunk_content_normales[level]);
+		chunk_content_vertice[level].print_info();
+		target->set_vertices(chunk_content_vertice[level], level);
+		target->parts(level)->vertices().print_info();
+		target->set_uvs(chunk_content_uvs[level], level);
+		target->set_normales(chunk_content_normales[level], level);
 	}
 }
 
