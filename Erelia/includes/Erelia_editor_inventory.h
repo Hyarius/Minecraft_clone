@@ -22,16 +22,17 @@ protected:
 	Icon_holder* _icon_holder;
 	Shortcut_bar* _shortcut_bar;
 	jgl::Frame* _inventory_frame;
-	std::vector<Editor_inventory_tab*> _item_library;
-	std::vector<jgl::Button*> _library_button;
+	jgl::Array<Editor_inventory_tab*> _item_library;
+	jgl::Array<jgl::Button*> _library_button;
 
 public:
 	Editor_inventory(jgl::Widget* parent);
+	~Editor_inventory();
 
 	Shortcut_bar* shortcut_bar() { return (_shortcut_bar); }
 	Item_slot* clicked_slot() { return (_clicked_slot); }
 	Item_slot* selected_item() { return (_shortcut_bar->selected_item()); }
-	std::vector<Editor_inventory_tab*>& item_library() { return (_item_library); }
+	jgl::Array<Editor_inventory_tab*>& item_library() { return (_item_library); }
 	Editor_inventory_tab* item_library(size_t index) { if (index >= static_cast<size_t>(Tab_type::count)) return (nullptr); return (_item_library[index]); }
 
 	void select_tab(size_t index);

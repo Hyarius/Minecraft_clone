@@ -7,10 +7,10 @@
 class Game_engine : public jgl::Widget
 {
 private:
-	Board* _board;
+	Board* _board = nullptr;
 
-	size_t _active_mode;
-	Game_mode *_modes[1];
+	size_t _active_mode = 0;
+	Game_mode* _modes[1] = {nullptr};
 
 public:
 	Game_engine(jgl::Widget* p_parent = nullptr);

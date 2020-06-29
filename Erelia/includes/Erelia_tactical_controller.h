@@ -17,6 +17,7 @@ protected:
 
 public:
 	Tactical_controller(Board* p_board, jgl::Widget *p_parent = nullptr);
+	~Tactical_controller();
 
 	Board* board() { return (_board); }
 	jgl::Camera* camera() { return (_camera); }

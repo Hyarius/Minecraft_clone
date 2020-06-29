@@ -95,10 +95,9 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 
 	Vector3 self_pos = _rel_pos + chunk_pos * chunk_size;
 	jgl::Mesh* result;
+
 	if (target == nullptr)
-	{
 		result = new jgl::Mesh(0);
-	}
 	else
 	{
 		result = target;
@@ -136,7 +135,6 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 			}
 		}
 	}
-
 	return (result);
 }
 

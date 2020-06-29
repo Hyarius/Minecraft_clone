@@ -10,7 +10,7 @@ protected:
 	jgl::Sprite_sheet* _tile;
 	Item* _item;
 public:
-	Icon_holder(jgl::Sprite_sheet *p_tile, jgl::Widget* p_parent)
+	Icon_holder(jgl::Sprite_sheet *p_tile, jgl::Widget* p_parent = nullptr) : jgl::Widget(p_parent)
 	{
 		_tile = p_tile;
 		_item = nullptr;

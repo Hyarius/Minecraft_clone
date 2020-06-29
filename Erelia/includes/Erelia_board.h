@@ -10,11 +10,13 @@ class Board
 private:
 	std::map<Vector3, Chunk*> _chunks;
 	std::vector<Entity*> _entities;
-	jgl::Sprite_sheet* _tileset;
+	jgl::Material* _material;
 
 public:
 	Board();
 	Board(jgl::String path);
+	~Board();
+
 	void reload(jgl::String);
 
 	void empty_initialize();
@@ -33,7 +35,7 @@ public:
 
 	std::map<Vector3, Chunk*>& chunks() { return (_chunks); }
 	std::vector<Entity*>& entities() { return _entities; }
-	jgl::Sprite_sheet* tileset() { return (_tileset); }
+	jgl::Material* material() { return (_material); }
 
 	Vector3 chunk_pos(Vector3 abs_pos);
 	Vector3 voxel_pos(Vector3 abs_pos);

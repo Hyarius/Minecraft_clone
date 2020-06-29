@@ -19,13 +19,24 @@ Board::Board()
 {
 	_chunks.clear();
 	_entities.clear();
-	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(40, 30));
+	_material = new jgl::Material("Board Material");
+	_material->diffuse_texture = new jgl::Image("ressources/texture/tile_tileset.png");
+	Chunk::create_base_content_data(Vector2(1, 1) / Vector2(40, 30));
 	empty_initialize();
 
 	for (size_t i = 0; i < NB_SCENERY; i++)
 	{
 		place_scenery(jgl::Vector3(i % 9, size_t(0), i / 9), scenery_list[i]);
 	}
+}
+
+Board::~Board()
+{
+	if (_material != nullptr)
+		delete _material;
+	for (auto tmp : _chunks)
+		delete tmp.second;
+	Chunk::delete_base_content_data();
 }
 
 void Board::reload(jgl::String path)
@@ -60,7 +71,9 @@ void Board::reload(jgl::String path)
 
 Board::Board(jgl::String path)
 {
-	_tileset = new jgl::Sprite_sheet("ressources/texture/tile_tileset.png", Vector2(40, 30));
+	_material = new jgl::Material("Board Material");
+	_material->diffuse_texture = new jgl::Image("ressources/texture/tile_tileset.png");
+	Chunk::create_base_content_data(Vector2(1, 1) / Vector2(40, 30));
 	reload(path);
 }
 
@@ -98,7 +111,7 @@ void Board::baking_chunk(jgl::Vector3 chunk_pos)
 
 void Board::add_chunk(jgl::Vector3 chunk_pos)
 {
-	_chunks[chunk_pos] = new Chunk(this->tileset(), chunk_pos);
+	_chunks[chunk_pos] = new Chunk(this->material(), chunk_pos);
 	
 }
 

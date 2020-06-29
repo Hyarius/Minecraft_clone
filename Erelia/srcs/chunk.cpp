@@ -6,16 +6,11 @@ extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
 extern jgl::Array<Vector2> block_uv_delta;
 
-jgl::Array< jgl::Array< jgl::Vector3> > chunk_content_vertice;
-jgl::Array< jgl::Array< jgl::Vector2> > chunk_content_uvs;
-jgl::Array< jgl::Array< jgl::Vector3> > chunk_content_normales;
-
-jgl::Mesh* tmp_cube = nullptr;
 Vector3 chunk_size = Vector3(9, 20, 9);
 
-Chunk::Chunk(jgl::Sprite_sheet* p_tileset, Vector3 p_pos)
+Chunk::Chunk(jgl::Material* p_material, Vector3 p_pos)
 {
-	_tileset = p_tileset;
+	_material = p_material;
 	_pos = p_pos;
 	_voxels = new Voxel * **[static_cast<int>(floor(chunk_size.x))];
 	int height = static_cast<int>(chunk_size.y) / 4;
@@ -34,47 +29,77 @@ Chunk::Chunk(jgl::Sprite_sheet* p_tileset, Vector3 p_pos)
 	}
 	_mesh = new jgl::Mesh(0);
 	init_mesh(_mesh);
-	_mesh->set_diffuse_texture(_tileset);
+	_mesh->set_material(_material, true);
 
 	_mesh_transparent = new jgl::Mesh(0);
 	init_mesh(_mesh_transparent);
 	_mesh_transparent->set_transparency(0.5f);
-	_mesh_transparent->set_diffuse_texture(_tileset);
+	_mesh_transparent->set_material(_material, true);
 }
 
-void Chunk::init_mesh(jgl::Mesh *target)
+Chunk::~Chunk()
 {
-	if (chunk_content_vertice.size() == 0)
-		chunk_content_vertice.resize(static_cast<int>(chunk_size.y));
-	if (chunk_content_uvs.size() == 0)
-		chunk_content_uvs.resize(static_cast<int>(chunk_size.y));
-	if (chunk_content_normales.size() == 0)
-		chunk_content_normales.resize(static_cast<int>(chunk_size.y));
+	for (int i = 0; i < chunk_size.x; i++)
+	{
+		for (int j = 0; j < chunk_size.y; j++)
+		{
+			for (int k = 0; k < chunk_size.z; k++)
+			{
+				delete _voxels[i][j][k];
+			}
+			delete[] _voxels[i][j];
+		}
+		delete[] _voxels[i];
+	}
+	delete [] _voxels;
+	delete _mesh;
+	delete _mesh_transparent;
+}
+
+
+void Chunk::create_base_content_data(Vector2 unit)
+{
+	if (_chunk_content_vertice.size() == 0)
+		_chunk_content_vertice.resize(static_cast<int>(chunk_size.y));
+	if (_chunk_content_uvs.size() == 0)
+		_chunk_content_uvs.resize(static_cast<int>(chunk_size.y));
+	if (_chunk_content_normales.size() == 0)
+		_chunk_content_normales.resize(static_cast<int>(chunk_size.y));
 	for (int level = 0; level < chunk_size.y; level++)
 	{
-		if (chunk_content_vertice[level].size() == 0)
+		if (_chunk_content_vertice[level].size() == 0)
 		{
 			for (int j = level * 2; j <= (level + 1) * 2; j++)
 				for (int k = 0; k <= chunk_size.z * 2; k++)
 					for (int i = 0; i <= chunk_size.x * 2; i++)
-						chunk_content_vertice[level].push_back(Vector3(i / 2.0f, j / 2.0f, k / 2.0f));
+						_chunk_content_vertice[level].push_back(Vector3(i / 2.0f, j / 2.0f, k / 2.0f));
 		}
-		if (chunk_content_uvs[level].size() == 0)
+		if (_chunk_content_uvs[level].size() == 0)
 		{
 			for (size_t type = 0; type < block_uv_delta.size(); type++)
 				for (size_t i = 0; i < 35; i++)
-					chunk_content_uvs[level].push_back((_tileset == nullptr ? 1 : _tileset->unit()) * (voxel_uv[i] + block_uv_delta[type]));
+					_chunk_content_uvs[level].push_back(unit * (voxel_uv[i] + block_uv_delta[type]));
 		}
-		if (chunk_content_normales[level].size() == 0)
+		if (_chunk_content_normales[level].size() == 0)
 		{
 			for (size_t i = 0; i < 9; i++)
-				chunk_content_normales[level].push_back(voxel_normales[i]);
+				_chunk_content_normales[level].push_back(voxel_normales[i]);
 		}
-		chunk_content_vertice[level].print_info();
-		target->set_vertices(chunk_content_vertice[level], level);
-		target->parts(level)->vertices().print_info();
-		target->set_uvs(chunk_content_uvs[level], level);
-		target->set_normales(chunk_content_normales[level], level);
+	}
+}
+
+void Chunk::delete_base_content_data()
+{
+
+}
+
+void Chunk::init_mesh(jgl::Mesh *target)
+{
+	for (int level = 0; level < chunk_size.y; level++)
+	{
+		target->set_vertices(_chunk_content_vertice[level], level);
+		target->set_uvs(_chunk_content_uvs[level], level);
+		target->set_normales(_chunk_content_normales[level], level);
 	}
 }
 
@@ -94,10 +119,12 @@ bool Chunk::need_bake(Board* board, Vector3 p_pos)
 	return (false);
 }
 
-void Chunk::bake(Board* board, int level)
+void Chunk::bake(Board* board, int level, jgl::Mesh **base_mesh)
 {
 	if (level < 0 || level >= chunk_size.y)
 		return;
+
+	jgl::Mesh* tmp_cube = *base_mesh;
 
 	Vector3 starter_pos = _pos * chunk_size;
 
@@ -128,42 +155,23 @@ void Chunk::bake(Board* board, int level)
 			}
 		}
 	}
+	if (base_mesh == nullptr)
+		delete tmp_cube;
+	else
+		*base_mesh = tmp_cube;
 	_mesh->check_part(level)->bake(_mesh->rot_matrix());
 	_mesh_transparent->check_part(level)->bake(_mesh->rot_matrix());
 }
 
 void Chunk::bake(Board* board)
 {
-	Vector3 starter_pos = _pos * chunk_size;
+	jgl::Mesh* tmp_cube = nullptr;
 
-	_mesh->clear_baked();
-	_mesh_transparent->clear_baked();
+	for (size_t i = 0; i < chunk_size.y; i++)
+		bake(board, i, &tmp_cube);
 
-	for (int i = 0; i < chunk_size.y; i++)
-	{
-		for (int j = 0; j < chunk_size.x; j++)
-		{
-			for (int k = 0; k < chunk_size.z; k++)
-			{
-				Voxel* tmp_voxel = _voxels[j][i][k];
-				if (tmp_voxel->type() != -1 && need_bake(board, Vector3(starter_pos.x + j, starter_pos.y + i, starter_pos.z + k)) == true)
-				{
-					jgl::Mesh* target = (block_alpha_array[tmp_voxel->type()] != 1 ? _mesh_transparent : _mesh);
-					tmp_cube = tmp_voxel->construct(board, _pos, tmp_cube);
-					if (tmp_cube != nullptr)
-					{
-						jgl::Mesh_part* other = tmp_cube->check_part(0);
-						for (size_t l = 0; l < other->faces().size(); l++)
-						{
-							target->add_face(*(other->faces(l)), i);
-						}
-					}
-				}
-			}
-		}
-	}
-	_mesh->bake();
-	_mesh_transparent->bake();
+	if (tmp_cube != nullptr)
+		delete tmp_cube;
 }
 
 void Chunk::render(jgl::Camera* camera)

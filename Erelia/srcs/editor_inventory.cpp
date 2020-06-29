@@ -62,6 +62,15 @@ Editor_inventory::Editor_inventory(jgl::Widget* parent) : jgl::Widget(parent)
 	_icon_holder->activate();
 }
 
+Editor_inventory::~Editor_inventory()
+{
+	for (size_t i = 0; i < _item_library.size(); i++)
+	{
+		if (_item_library[i] != nullptr)
+			delete _item_library[i];
+	}
+}
+
 Item_slot* Editor_inventory::find_shortcut_slot()
 {
 	Item_slot* tmp;

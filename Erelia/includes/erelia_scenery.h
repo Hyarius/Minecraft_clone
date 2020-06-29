@@ -8,9 +8,9 @@
 class Scenery
 {
 private:
-	size_t _id;
-	jgl::Vector3 _size;
-	jgl::Mesh* _body;
+	size_t _id = 0;
+	jgl::Vector3 _size = {1, 1, 1};
+	jgl::Mesh* _body = nullptr;
 
 public:
 	Scenery(size_t p_id, jgl::Mesh* p_body, jgl::Vector3 p_size)
@@ -18,6 +18,11 @@ public:
 		_id = p_id;
 		_size = p_size;
 		_body = p_body;
+	}
+	~Scenery()
+	{
+		if (_body != nullptr)
+			delete _body;
 	}
 
 	size_t id() { return (_id); }

@@ -33,9 +33,16 @@ void Editor_visualizer::set_voxels(Vector3 p_first, Vector3 p_second)
 }
 void Editor_visualizer::recalculate()
 {
-	std::sort(_pos_vector.begin(), _pos_vector.end(), [this](const Vector3& lhs, const Vector3& rhs) {
-		return lhs.distance(_controller->camera()->pos()) < rhs.distance(_controller->camera()->pos());
-		});
+	for (size_t i = 1; i < _pos_vector.size(); i++)
+	{
+		if (_pos_vector[i - 1].distance(_controller->camera()->pos()) > _pos_vector[i].distance(_controller->camera()->pos()))
+		{
+			Vector3 tmp = _pos_vector[i - 1];
+			_pos_vector[i - 1] = _pos_vector[i];
+			_pos_vector[i] = tmp;
+			i = 0;
+		}
+	}
 }
 
 void Editor_visualizer::set_geometry_imp(Vector2 p_anchor, Vector2 p_area) {}

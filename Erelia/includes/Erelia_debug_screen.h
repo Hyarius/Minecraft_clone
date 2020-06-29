@@ -15,7 +15,12 @@ struct Debug_line
 	int line = 0;
 
 	jgl::Image* text_image = nullptr;
-
+	
+	~Debug_line()
+	{
+		if (text_image != nullptr)
+			delete text_image;
+	}
 	Debug_line()
 	{
 	
@@ -26,7 +31,7 @@ struct Debug_line
 	}
 	Debug_line(jgl::String p_content, jgl::alignment p_align, jgl::text_color p_text_color = jgl::text_color::white, int p_line = -1)
 	{
-		content = jgl::String(p_content);
+		content = p_content;
 		align = p_align;
 		text_color = p_text_color;
 		line = p_line;
@@ -34,7 +39,7 @@ struct Debug_line
 	}
 	void set_text(jgl::String p_content)
 	{
-		content = jgl::String(p_content);
+		content = p_content;
 		if (text_image != nullptr)
 			delete text_image;
 		text_image = nullptr;
@@ -52,9 +57,9 @@ struct Debug_line
 class Debug_screen : public jgl::Widget
 {
 private:
-	std::vector<Debug_line> _to_print;
+	jgl::Array<Debug_line> _to_print;
 
-	std::vector<Debug_line *> _line_order[3];
+	jgl::Array<Debug_line *> _line_order[3];
 
 	Vector2 _begin_pos = {20, 20};
 	size_t _text_size = 16;

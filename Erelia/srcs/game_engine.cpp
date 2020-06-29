@@ -16,8 +16,10 @@ Game_engine::~Game_engine()
 	delete_item_list();
 	if (icon_tile != nullptr)
 		delete icon_tile;
-	delete _board;
-	delete _modes[0];
+	if (_board != nullptr)
+		delete _board;
+	if (_modes[0] != nullptr)
+		delete _modes[0];
 }
 
 void Game_engine::update()

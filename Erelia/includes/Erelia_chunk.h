@@ -11,18 +11,27 @@ using jgl::Vector3;
 class Chunk
 {
 private:
-	jgl::Sprite_sheet* _tileset = nullptr;
+	static inline jgl::Array< jgl::Array< jgl::Vector3> > _chunk_content_vertice;
+	static inline jgl::Array< jgl::Array< jgl::Vector2> > _chunk_content_uvs;
+	static inline jgl::Array< jgl::Array< jgl::Vector3> > _chunk_content_normales;
+
+	jgl::Material* _material = nullptr;
 	jgl::Mesh* _mesh;
 	jgl::Mesh* _mesh_transparent;
 	Vector3 _pos = -1;
 	Voxel**** _voxels = nullptr;
 
-public:
-	Chunk(jgl::Sprite_sheet *p_tile_tileset, Vector3 p_pos);
+public:	
+	static void create_base_content_data(Vector2 unit);
+	static void delete_base_content_data();
+
+	Chunk(jgl::Material* p_material, Vector3 p_pos);
+	~Chunk();
+
 	void init_mesh(jgl::Mesh* target);
 	bool need_bake(class Board* board, Vector3 pos);
 	void bake(class Board* board);
-	void bake(Board* board, int y_index);
+	void bake(Board* board, int y_index, jgl::Mesh** base_mesh = nullptr);
 	void render(jgl::Camera* camera);
 	void render_transparent(jgl::Camera *camera);
 	void place_block(Vector3 pos, int type);

@@ -10,15 +10,20 @@
 class Editor_visualizer : public jgl::Widget
 {
 private:
-	Tactical_controller* _controller;
+	Tactical_controller* _controller = nullptr;
 
-	jgl::Mesh* _pointer;
-	std::vector<Vector3> _pos_vector;
+	jgl::Mesh* _pointer = nullptr;
+	jgl::Array<Vector3> _pos_vector;
 	Vector3 _first_voxel;
 	Vector3 _second_voxel;
 
 public:
 	Editor_visualizer(Tactical_controller* p_controller, jgl::Widget* p_parent);
+	~Editor_visualizer()
+	{
+		if (_pointer != nullptr)
+			delete _pointer;
+	}
 	void set_voxels(Vector3 p_first, Vector3 p_second);
 	void recalculate();
 	void set_geometry_imp(Vector2 p_anchor, Vector2 p_area);
@@ -63,6 +68,7 @@ protected:
 
 public:
 	Editor_mode(class Game_engine* p_engine, Board* p_board);
+
 
 	bool edited() { return (_edited); }
 	void set_edited(bool p_state) { _edited = p_state; _timer = _actual_tick + _delta_time; }

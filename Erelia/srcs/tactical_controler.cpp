@@ -12,6 +12,12 @@ Tactical_controller::Tactical_controller(Board* p_board, jgl::Widget* p_parent) 
 	_camera->set_light_position(Vector3(0, 100, 0));
 }
 
+Tactical_controller::~Tactical_controller()
+{
+	if (_camera != nullptr)
+		delete _camera;
+}
+
 void Tactical_controller::move_camera(Vector3 delta)
 {
 	_camera->move(delta);
