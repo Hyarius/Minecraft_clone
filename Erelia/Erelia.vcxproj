@@ -41,6 +41,7 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_glyph.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_image.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_keyboard.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_material.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_matrix.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_mesh.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_mesh_part.cpp" />
@@ -81,7 +82,8 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_text_entry_component.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_value_component.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\widget_component\w_value_entry_component.cpp" />
-    <ClCompile Include="srcs\board.cpp">
+    <ClCompile Include="srcs\minimap.cpp" />
+    <ClCompile Include="srcs\world.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="srcs\chunk.cpp">
@@ -135,7 +137,7 @@
     <ClCompile Include="srcs\shortcut_bar.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="srcs\tactical_controler.cpp">
+    <ClCompile Include="srcs\player_controler.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="srcs\voxel_data.cpp">
@@ -199,7 +201,9 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_window.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget_component\jgl_widget_component.h" />
     <ClInclude Include="includes\Erelia.h" />
-    <ClInclude Include="includes\Erelia_board.h" />
+    <ClInclude Include="includes\erelia_minimap.h" />
+    <ClInclude Include="includes\erelia_player.h" />
+    <ClInclude Include="includes\Erelia_world.h" />
     <ClInclude Include="includes\Erelia_chunk.h" />
     <ClInclude Include="includes\Erelia_debug_screen.h" />
     <ClInclude Include="includes\Erelia_editor_inventory.h" />
@@ -212,7 +216,7 @@
     <ClInclude Include="includes\Erelia_item_slot.h" />
     <ClInclude Include="includes\erelia_scenery.h" />
     <ClInclude Include="includes\Erelia_shortcut_bar.h" />
-    <ClInclude Include="includes\Erelia_tactical_controller.h" />
+    <ClInclude Include="includes\Erelia_player_controller.h" />
     <ClInclude Include="includes\Erelia_voxel.h" />
     <ClInclude Include="includes\Erelia_icon_holder.h" />
   </ItemGroup>

@@ -3,8 +3,6 @@
 
 #include "jgl.h"
 
-#define NB_SCENERY 20
-
 class Scenery
 {
 private:
@@ -29,12 +27,11 @@ public:
 	jgl::Vector3 size() { return (_size); }
 	jgl::Mesh* body() { return (_body); }
 
-	void render(jgl::Camera* camera, jgl::Vector3 pos)
+	void render(jgl::Camera* camera, jgl::Vector3 pos, const jgl::Viewport* viewport)
 	{
-		_body->render_differed(camera, pos);
+		_body->render_differed(camera, pos, viewport);
 	}
 };
 
-extern Scenery* scenery_list[NB_SCENERY];
 
 #endif

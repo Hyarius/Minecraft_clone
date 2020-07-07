@@ -9,6 +9,9 @@
 using jgl::Vector2;
 using jgl::Vector3;
 
+#define AIR_BLOCK -1
+#define SCENERY_BLOCK -2
+
 class Voxel
 {
 private:
@@ -20,7 +23,7 @@ private:
 public:
 	Voxel(Vector3 p_rel_pos, int p_type);
 
- 	int type() { return (_type); }
+	int type() { return (_type); }
 	Entity* entity() { return _entity; }
 	Scenery* scenery() { return _scenery; }
 
@@ -30,8 +33,8 @@ public:
 
 	void edit_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target);
 	void add_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target);
-	void compose_face(class Board* board, Vector3 chunk_pos, int* dest, int face, int index);
-	jgl::Mesh* construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target = nullptr);
+	void compose_face(class World* world, Vector3 chunk_pos, int* dest, int face, int index);
+	jgl::Mesh* construct(World* world, Vector3 chunk_pos, jgl::Mesh* target = nullptr);
 
 	void save(Vector3 delta, std::fstream& file);
 };

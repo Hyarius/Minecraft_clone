@@ -24,7 +24,7 @@ Voxel::Voxel(Vector3 p_rel_pos, int p_type)
 #define IDENTICAL 0
 #define DIFFERENT 1
 
-void Voxel::add_voxel_comp(jgl::Sprite_sheet *tileset, jgl::Mesh* target)
+void Voxel::add_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target)
 {
 	for (size_t i = 0; i < 13; i++)
 	{
@@ -48,7 +48,7 @@ void Voxel::edit_voxel_comp(jgl::Sprite_sheet* tileset, jgl::Mesh* target)
 	}
 }
 
-void Voxel::compose_face(Board *board, Vector3 chunk_pos, int* dest, int face, int index)
+void Voxel::compose_face(World* world, Vector3 chunk_pos, int* dest, int face, int index)
 {
 	if (face >= 4)
 	{
@@ -59,8 +59,8 @@ void Voxel::compose_face(Board *board, Vector3 chunk_pos, int* dest, int face, i
 	else
 	{
 		Vector3 tmp_pos = _rel_pos + chunk_pos * chunk_size;
-		Chunk* tmp_chunk = board->chunks(chunk_pos);
-		Voxel *voxels_to_try[6] = {
+		Chunk* tmp_chunk = world->chunks(chunk_pos);
+		Voxel* voxels_to_try[6] = {
 			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 0]),
 			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 1]),
 			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 2]),
@@ -68,15 +68,18 @@ void Voxel::compose_face(Board *board, Vector3 chunk_pos, int* dest, int face, i
 			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 1] + jgl::Vector3::up()),
 			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 2] + jgl::Vector3::up())
 		};
-		int voxel_value[3] = {IDENTICAL, IDENTICAL, IDENTICAL};
+		int voxel_value[3] = { IDENTICAL, IDENTICAL, IDENTICAL };
 		for (size_t j = 0; j < 3; j++)
 		{
 			if (voxels_to_try[j] == nullptr)
 			{
-				voxels_to_try[j] = board->voxels(tmp_pos + neightbour_compose_face[face][2 - j]);
-				voxels_to_try[j + 3] = board->voxels(tmp_pos + neightbour_compose_face[face][2 - j] + jgl::Vector3::up());
+				voxels_to_try[j] = world->voxels(tmp_pos + neightbour_compose_face[face][2 - j]);
+				voxels_to_try[j + 3] = world->voxels(tmp_pos + neightbour_compose_face[face][2 - j] + jgl::Vector3::up());
 			}
-			if (voxels_to_try[j] == nullptr || (voxels_to_try[j + 3] != nullptr && (voxels_to_try[j + 3]->type() != -1 && block_alpha_array[voxels_to_try[j + 3]->type()] == 1.0f)) || voxels_to_try[j]->type() != _type)
+			if (voxels_to_try[j] == nullptr ||
+				(voxels_to_try[j + 3] != nullptr && voxels_to_try[j + 3]->type() > AIR_BLOCK &&
+				block_alpha_array[voxels_to_try[j + 3]->type()] == 1.0f) ||
+				voxels_to_try[j]->type() != _type)
 				voxel_value[j] = DIFFERENT;
 		}
 		int sprite_index_delta = _type * 35;
@@ -88,7 +91,7 @@ void Voxel::compose_face(Board *board, Vector3 chunk_pos, int* dest, int face, i
 	}
 }
 
-jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
+jgl::Mesh* Voxel::construct(World* world, Vector3 chunk_pos, jgl::Mesh* target)
 {
 	if (_type == -1)
 		return (nullptr);
@@ -109,10 +112,10 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 	for (size_t face = 0; face < 9; face++)
 	{
 		Vector3 tmp_next = self_pos + voxel_neighbour[face];
-		Voxel* tmp_voxel = board->voxels(tmp_next);
-		float tmp_alpha = (tmp_voxel == nullptr || tmp_voxel->type()  == -1 ? base_alpha : block_alpha_array[tmp_voxel->type()]);
+		Voxel* tmp_voxel = world->voxels(tmp_next);
+		float tmp_alpha = (tmp_voxel == nullptr || tmp_voxel->type() <= AIR_BLOCK ? base_alpha : block_alpha_array[tmp_voxel->type()]);
 
-		if (tmp_voxel == nullptr || tmp_voxel->type() == -1 || tmp_alpha != base_alpha)
+		if (tmp_voxel == nullptr || tmp_voxel->type() <= AIR_BLOCK || tmp_alpha != base_alpha)
 		{
 			for (size_t index = 0; index < 2; index++)
 			{
@@ -128,9 +131,7 @@ jgl::Mesh* Voxel::construct(Board* board, Vector3 chunk_pos, jgl::Mesh* target)
 					tmp_vertices_index[j] = tmp_index;
 					tmp_normales_index[j] = face;
 				}
-
-				compose_face(board, chunk_pos, tmp_uvs_index, face, index);
-
+				compose_face(world, chunk_pos, tmp_uvs_index, face, index);
 				result->add_face(jgl::Face(tmp_vertices_index, tmp_uvs_index, tmp_normales_index));
 			}
 		}

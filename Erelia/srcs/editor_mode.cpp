@@ -6,7 +6,8 @@ void save_map(jgl::Data param)
 
 	if (editor != nullptr)
 	{
-		editor->contener()->set_frozen(true);
+		editor->set_frozen(true);
+		editor->echap_menu_frame()->desactivate();
 		editor->editor_contener()->desactivate();
 		editor->saver_menu()->activate();
 		editor->saver_menu()->actualize_files();
@@ -19,7 +20,8 @@ void load_map(jgl::Data param)
 
 	if (editor != nullptr)
 	{
-		editor->contener()->set_frozen(true);
+		editor->set_frozen(true);
+		editor->echap_menu_frame()->desactivate();
 		editor->editor_contener()->desactivate();
 		editor->loader_menu()->activate();
 		editor->loader_menu()->actualize_files();
@@ -42,11 +44,12 @@ void save_quit_editor(jgl::Data param)
 	quit_editor(param);
 }
 
-Editor_mode::Editor_mode(Game_engine* p_engine, Board* p_board) : Game_mode(p_engine)
+Editor_mode::Editor_mode(Game_engine* p_engine, World* p_world, Player *p_player) : Game_mode(p_engine)
 {
+	_player = p_player;
 	_edited = false;
 	_engine = p_engine;
-	_board = p_board;
+	_world = p_world;
 	_voxel_source = -1;
 	_voxel_target = -1;
 	_actual_tick = g_time;
@@ -62,14 +65,17 @@ Editor_mode::Editor_mode(Game_engine* p_engine, Board* p_board) : Game_mode(p_en
 
 void Editor_mode::create_editor_panel()
 {
-	_editor_contener = new jgl::Contener(_contener);
+	_editor_contener = new jgl::Contener(this);
 	_editor_contener->activate();
 
-	_editor_inventory = new Editor_inventory(_editor_contener);
-	_editor_inventory->activate();
+	_minimap = new Minimap(_world, _player, _editor_contener);
+	_minimap->activate();
 
-	_controller = new Tactical_controller(_board, _editor_contener);
+	_controller = new Player_controller(_world, _player, _minimap->camera(), _editor_contener);
 	_controller->activate();
+
+	_editor_inventory = new Editor_inventory(_controller, _editor_contener);
+	_editor_inventory->activate();
 
 	_debug_screen = new Debug_screen(_editor_contener);
 	_debug_screen->set_text_size(18);
@@ -83,12 +89,16 @@ void Editor_mode::create_editor_panel()
 
 	create_echap_panel();
 
-	_controller->send_front();
+	_controller->send_back();
+	_minimap->send_front();
+	_minimap->lower();
+	_editor_inventory->send_front();
 }
 
 void Editor_mode::create_echap_panel()
 {
-	_echap_menu_frame = new jgl::Frame(_editor_contener);
+	_echap_menu_frame = new jgl::Frame(this);
+	_echap_menu_frame->send_front();
 
 	_save_button = new jgl::Button(save_map, this, _echap_menu_frame);
 	_save_button->set_text("Save the level");
@@ -118,8 +128,8 @@ bool Editor_mode::voxel_raycast(Vector3 pos, Vector3 direction, Vector3* voxel_s
 	Vector3 actual = pos;
 	Vector3 old = -1;
 
-	if (_board == nullptr)
-		jgl::error_exit(1, "Error in voxel raycasting : board nullptr");
+	if (_world == nullptr)
+		jgl::error_exit(1, "Error in voxel raycasting : world nullptr");
 
 	while (found == false && actual.y >= 0.0f && pos.distance(actual) <= 100.0f)
 	{
@@ -127,8 +137,8 @@ bool Editor_mode::voxel_raycast(Vector3 pos, Vector3 direction, Vector3* voxel_s
 		if (actual.floor() != old)
 		{
 			old = actual.floor();
-			Voxel* tmp = _board->voxels(actual);
-			if (tmp != nullptr && tmp->type() >= 0)
+			Voxel* tmp = _world->voxels(actual);
+			if (tmp != nullptr && tmp->type() != AIR_BLOCK)
 				found = true;
 		}
 	}
@@ -157,7 +167,8 @@ bool Editor_mode::voxel_raycast(Vector3 pos, Vector3 direction, Vector3* voxel_s
 	}
 }
 
-void Editor_mode::handle_change_block(Vector3 A, Vector3 B, int type)
+
+void Editor_mode::use_item_left(Vector3 A, Vector3 B, Item* item)
 {
 	std::vector<jgl::Vector3> chunk_pos_list;
 
@@ -169,20 +180,24 @@ void Editor_mode::handle_change_block(Vector3 A, Vector3 B, int type)
 			for (int k = static_cast<int>(start.z); k <= static_cast<int>(end.z); k++)
 			{
 				Vector3 voxel_pos = Vector3(i, j, k);
-				Vector3 chunk_pos = _board->chunk_pos(voxel_pos);
-				if (_board->voxels(voxel_pos) != nullptr && _board->voxels(voxel_pos)->type() != -1 && _board->voxels(voxel_pos)->type() != type)
+				Vector3 chunk_pos = _world->chunk_pos(voxel_pos);
+				if (item->type == item_type::block)
 				{
 					if (std::find(chunk_pos_list.begin(), chunk_pos_list.end(), chunk_pos) == chunk_pos_list.end())
 						chunk_pos_list.push_back(chunk_pos);
-					_board->set_block(voxel_pos, type);
 				}
+				if (item->type != item_type::scenery || _world->voxels(voxel_pos)->type() != AIR_BLOCK)
+					item->use(jgl::Data(2, _world, &voxel_pos));
 			}
 
-	for (size_t i = 0; i < chunk_pos_list.size(); i++)
-		_board->baking_chunk(chunk_pos_list[i]);
+	if (item->type == item_type::block)
+	{
+		for (size_t i = 0; i < chunk_pos_list.size(); i++)
+			_world->baking_chunk(chunk_pos_list[i]);
+	}
 }
 
-void Editor_mode::handle_multibloc_pos(Vector3 A, Vector3 B, int type)
+void Editor_mode::use_item_right(Vector3 A, Vector3 B, Item* item)
 {
 	std::vector<jgl::Vector3> chunk_pos_list;
 
@@ -194,18 +209,22 @@ void Editor_mode::handle_multibloc_pos(Vector3 A, Vector3 B, int type)
 			for (int k = static_cast<int>(start.z); k <= static_cast<int>(end.z); k++)
 			{
 				Vector3 voxel_pos = Vector3(i, j, k);
-				Vector3 chunk_pos = _board->chunk_pos(voxel_pos);
-				if (_board->voxels(voxel_pos) == nullptr || _board->voxels(voxel_pos)->type() == -1 || type == -1)
+				Voxel* tmp_voxel = _world->voxels(voxel_pos);
+				if (tmp_voxel != nullptr)
 				{
+					Vector3 chunk_pos = _world->chunk_pos(voxel_pos);
 					if (std::find(chunk_pos_list.begin(), chunk_pos_list.end(), chunk_pos) == chunk_pos_list.end())
 						chunk_pos_list.push_back(chunk_pos);
-					_board->set_block(voxel_pos, type);
+					if (_world->voxels(voxel_pos)->type() > AIR_BLOCK)
+						_world->set_block(voxel_pos, AIR_BLOCK);
+					while (_world->voxels(voxel_pos)->type() == SCENERY_BLOCK)
+						(voxel_pos.y)--;
+					_world->place_scenery(voxel_pos, nullptr);
 				}
 			}
 
 	for (size_t i = 0; i < chunk_pos_list.size(); i++)
-		_board->baking_chunk(chunk_pos_list[i]);
-
+		_world->baking_chunk(chunk_pos_list[i]);
 }
 
 void Editor_mode::update()
@@ -250,18 +269,26 @@ void Editor_mode::update()
 
 bool Editor_mode::handle_keyboard()
 {
+	if (_dodge == true)
+	{
+		_dodge = false;
+		return (false);
+	}
 	if (_edited == true)
 		return (false);
 	if (_editor_inventory->toggle() == true)
-		return (true);
+		return (false);
 
 	if (jgl::get_key(jgl::key::escape) == jgl::key_state::release)
 	{
 		_echap_menu_frame->set_active(!_echap_menu_frame->is_active());
 		_editor_inventory->set_shortcut_frozen(_echap_menu_frame->is_active());
+		_controller->set_frozen(_echap_menu_frame->is_active());
+		g_mouse->place(g_application->size() / 2);
+		g_mouse->actualize();
 		return (true);
 	}
-	if (jgl::get_key(jgl::key::F3) == jgl::key_state::release)
+	else if (jgl::get_key(jgl::key::F3) == jgl::key_state::release)
 	{
 		_debug_screen->set_active(!_debug_screen->is_active());
 		return (true);
@@ -272,21 +299,31 @@ bool Editor_mode::handle_keyboard()
 
 bool Editor_mode::handle_mouse()
 {
+	Item* item = (_editor_inventory->selected_item() != nullptr ? _editor_inventory->selected_item()->item() : nullptr);
+
+	if (_dodge == true)
+	{
+		_dodge = false;
+		return (false);
+	}
 	if (_edited == true)
 		return (false);
 	if (_editor_inventory->is_frozen() == true)
-		return (true);
+		return (false);
 	if (_editor_inventory->toggle() == true || _editor_inventory->shortcut_bar()->is_pointed() == true)
-		return false;
+		return (false);
 	if (_echap_menu_frame->is_active() == true)
 		return (false);
 
 	bool raycast_state = false;
-	if (jgl::get_button(jgl::mouse_button::left) != jgl::mouse_state::up || jgl::get_button(jgl::mouse_button::right) != jgl::mouse_state::up)
-		raycast_state = voxel_raycast(_controller->camera()->pos(), _controller->camera()->mouse_direction(), &_voxel_source, &_voxel_target);
-	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::pressed)
+	if (jgl::get_button(jgl::mouse_button::left) != jgl::mouse_state::up ||
+		jgl::get_button(jgl::mouse_button::right) != jgl::mouse_state::up ||
+		jgl::get_button(jgl::mouse_button::center) != jgl::mouse_state::up)
+		raycast_state = voxel_raycast(_controller->camera()->pos(), _controller->camera()->mouse_direction(_controller->viewport()), &_voxel_source, &_voxel_target);
+	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::pressed && item != nullptr)
 	{
-		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
+		_visualizer->activate();
+		if (item->type == item_type::block)
 		{
 			_first_voxel = _voxel_target;
 			_second_voxel = _voxel_target;
@@ -297,51 +334,73 @@ bool Editor_mode::handle_mouse()
 			_second_voxel = _voxel_source;
 		}
 		_visualizer->set_voxels(_first_voxel, _second_voxel);
-		_visualizer->recalculate();
+		return (true);
+		
 	}
-	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::down)
+	else if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::down && item != nullptr)
 	{
-		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
+		_visualizer->activate();
+		if (item->type == item_type::block)
 			_second_voxel = _voxel_target;
 		else
 			_second_voxel = _voxel_source;
 		_visualizer->set_voxels(_first_voxel, _second_voxel);
-		_visualizer->recalculate();
+		return (true);
+		
 	}
-	if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::release)
+	else if (jgl::get_button(jgl::mouse_button::left) == jgl::mouse_state::release && item != nullptr)
 	{
-		if (jgl::get_key(jgl::key::left_control) != jgl::key_state::down)
+		_visualizer->activate();
+		if (_editor_inventory->selected_item() != nullptr)
 		{
-			if (_editor_inventory->selected_item() != nullptr && _editor_inventory->selected_item()->item() != nullptr && _editor_inventory->selected_item()->item()->type == item_type::block)
-				handle_multibloc_pos(_first_voxel, _second_voxel, static_cast<Block_item*>(_editor_inventory->selected_item()->item())->block_id);
-		}
-		else
-		{
-			if (_editor_inventory->selected_item() != nullptr && _editor_inventory->selected_item()->item() != nullptr && _editor_inventory->selected_item()->item()->type == item_type::block)
-				handle_change_block(_first_voxel, _second_voxel, static_cast<Block_item*>(_editor_inventory->selected_item()->item())->block_id);
+			if (item != nullptr)
+				use_item_left(_first_voxel, _second_voxel, item);
 		}
 		_first_voxel = 0;
 		_second_voxel = 0;
+		return (true);
 	}
-	if (jgl::get_button(jgl::mouse_button::right) == jgl::mouse_state::pressed)
+	else if (jgl::get_button(jgl::mouse_button::center) == jgl::mouse_state::release)
 	{
+		_visualizer->activate();
+		if (_world->voxels(_voxel_source) != nullptr &&
+			_world->voxels(_voxel_source)->type() > AIR_BLOCK)
+		{
+			_editor_inventory->shortcut_bar()->selected_item()->set_item(item_list[_world->voxels(_voxel_source)->type()]);
+		}
+		return (true);
+	}
+	else if (jgl::get_button(jgl::mouse_button::right) == jgl::mouse_state::pressed)
+	{
+		_visualizer->activate();
 		_first_voxel = _voxel_source;
 		_second_voxel = _voxel_source;
 		_visualizer->set_voxels(_first_voxel, _second_voxel);
-		_visualizer->recalculate();
+		return (true);
+		
 	}
-	if (jgl::get_button(jgl::mouse_button::right) == jgl::mouse_state::down)
+	else if (jgl::get_button(jgl::mouse_button::right) == jgl::mouse_state::down)
 	{
+		_visualizer->activate();
 		_second_voxel = _voxel_source;
 		_visualizer->set_voxels(_first_voxel, _second_voxel);
-		_visualizer->recalculate();
+		return (true);
+		
 	}
-	if (jgl::get_button(jgl::mouse_button::right) == jgl::mouse_state::release)
+	else if (jgl::get_button(jgl::mouse_button::right) == jgl::mouse_state::release)
 	{
-		if (_editor_inventory->selected_item() != nullptr && _editor_inventory->selected_item()->item() != nullptr)
-			handle_multibloc_pos(_first_voxel, _second_voxel, -1);
+		_visualizer->activate();
+		if (item != nullptr)
+			use_item_right(_first_voxel, _second_voxel, item);
+		else
+			use_item_right(_first_voxel, _second_voxel, nullptr);
 		_first_voxel = 0;
 		_second_voxel = 0;
+		return (true);
+	}
+	else
+	{
+		_visualizer->desactivate();
 	}
 
 	return (false);
@@ -349,15 +408,16 @@ bool Editor_mode::handle_mouse()
 
 void Editor_mode::render()
 {
-	
+	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void Editor_mode::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 {
-	_controller->set_geometry(p_anchor, p_area);
-	_visualizer->set_geometry(p_anchor, p_area);
-	_editor_inventory->set_geometry(p_anchor, p_area);
-	_echap_menu_frame->set_geometry(g_application->size() / 4 - 10, g_application->size() / 2 + 20);
+	_controller->set_geometry(0, p_area);
+	_minimap->set_geometry(Vector2(p_area.x - p_area.x / 4, 0.0f), p_area / 4);
+	_visualizer->set_geometry(0, p_area);
+	_editor_inventory->set_geometry(0, p_area);
+	_echap_menu_frame->set_geometry(p_area / 4 - 10, p_area / 2 + 20);
 	Vector2 size = Vector2(_echap_menu_frame->area().x - 20, 40.0f);
 	Vector2 pos = 10;
 	_save_button->set_geometry(pos, size);
@@ -369,8 +429,8 @@ void Editor_mode::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 	_save_quit_button->set_geometry(pos, size);
 	pos.y += size.y + 10;
 	_quit_button->set_geometry(pos, size);
-	_debug_screen->set_geometry(p_anchor, p_area);
+	_debug_screen->set_geometry(0, p_area);
 
-	_saver_menu->set_geometry(p_anchor, p_area);
-	_loader_menu->set_geometry(p_anchor, p_area);
+	_saver_menu->set_geometry(0, p_area);
+	_loader_menu->set_geometry(0, p_area);
 }

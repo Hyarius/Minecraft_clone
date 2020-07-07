@@ -2,23 +2,15 @@
 #define ERELIA_GAME_MODE_H
 
 #include "jgl.h"
-#include "erelia_board.h"
+#include "erelia_world.h"
 
-class Game_mode
+class Game_mode : public jgl::Widget
 {
 protected:
 	class Game_engine* _engine;
-	jgl::Contener* _contener;
 
 public:
 	Game_mode(class Game_engine* p_engine);
-	
-	jgl::Contener* contener() {	return (_contener);}
-
-	void set_active(bool p_state) { _contener->set_active(p_state); }
-	void activate() { _contener->activate(); }
-	void desactivate() { _contener->desactivate(); }
-	bool is_active() { return (_contener->is_active()); }
 
 	virtual void update() = 0;
 	virtual bool handle_keyboard() = 0;

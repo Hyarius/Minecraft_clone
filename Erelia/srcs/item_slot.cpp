@@ -20,6 +20,7 @@ void Item_slot::render()
 
 void Item_slot::set_geometry_imp(jgl::Vector2 p_anchor, jgl::Vector2 p_area)
 {
+	_viewport->resize(p_anchor, p_area);
 	_box.set_anchor(p_anchor);
 	_box.set_area(p_area);
 }

@@ -29,13 +29,15 @@ public:
 	~Chunk();
 
 	void init_mesh(jgl::Mesh* target);
-	bool need_bake(class Board* board, Vector3 pos);
-	void bake(class Board* board);
-	void bake(Board* board, int y_index, jgl::Mesh** base_mesh = nullptr);
-	void render(jgl::Camera* camera);
-	void render_transparent(jgl::Camera *camera);
+	bool need_bake(class World* world, Vector3 pos);
+	void bake(class World* world);
+	void bake(World* world, int y_index, jgl::Mesh** base_mesh = nullptr);
+	void render(jgl::Camera* camera, const jgl::Viewport* viewport = nullptr);
+	void render(jgl::Camera* camera, int height, const jgl::Viewport* viewport = nullptr);
+	void render_transparent(jgl::Camera* camera, const jgl::Viewport* viewport = nullptr);
+	void render_transparent(jgl::Camera *camera, int height, const jgl::Viewport* viewport = nullptr);
 	void place_block(Vector3 pos, int type);
-	void place_scenery(jgl::Vector3 pos, Scenery* p_scenery);
+	void place_scenery(World* world, jgl::Vector3 pos, Scenery* p_scenery);
 	Voxel**** voxels() { return (_voxels); }
 	Voxel* voxels(jgl::Vector3 tmp_pos);
 	Vector3 pos() { return (_pos); }

@@ -5,9 +5,10 @@ Game_engine::Game_engine(jgl::Widget * p_parent) : jgl::Widget(p_parent)
 	create_item_list();
 	if (icon_tile == nullptr)
 		icon_tile = new jgl::Sprite_sheet("ressources/texture/icon_tileset.png", Vector2(10, 13));
-	_board = new Board();
+	_board = new World();
+	_player = new Player();
 	_active_mode = 0;
-	_modes[0] = new Editor_mode(this, _board);
+	_modes[0] = new Editor_mode(this, _board, _player);
 	_modes[0]->activate();
 }
 
@@ -18,36 +19,22 @@ Game_engine::~Game_engine()
 		delete icon_tile;
 	if (_board != nullptr)
 		delete _board;
-	if (_modes[0] != nullptr)
-		delete _modes[0];
 }
 
 void Game_engine::update()
 {
-	if (_modes[_active_mode] != nullptr && _modes[_active_mode]->is_active() == true)
-		_modes[_active_mode]->update();
 }	
 bool Game_engine::handle_keyboard()
 {
-	if (_modes[_active_mode] != nullptr && _modes[_active_mode]->is_active() == true)
-		return (_modes[_active_mode]->handle_keyboard());
-	else
-	{
-		return (false);
-	}
+	return (false);
 }	
 bool Game_engine::handle_mouse()
 {
-	if (_modes[_active_mode] != nullptr && _modes[_active_mode]->is_active() == true)
-		return (_modes[_active_mode]->handle_mouse());
-	else
-		return (false);
+	return (false);
 }	
 void Game_engine::render()
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
-	if (_modes[_active_mode] != nullptr && _modes[_active_mode]->is_active() == true)
-		_modes[_active_mode]->render();
+
 }	
 void Game_engine::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 {

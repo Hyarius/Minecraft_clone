@@ -10,9 +10,6 @@
     <ClCompile Include="srcs\voxel.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="srcs\board.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\entity.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -220,9 +217,6 @@
     <ClCompile Include="srcs\editor_inventory_tab.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="srcs\tactical_controler.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\item_slot.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -250,12 +244,21 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_pool.cpp">
       <Filter>JGL\srcs\structure</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_material.cpp">
+      <Filter>JGL\srcs\structure</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\player_controler.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\world.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\minimap.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Erelia.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\Erelia_board.h">
       <Filter>Includes</Filter>
     </ClInclude>
     <ClInclude Include="includes\Erelia_chunk.h">
@@ -432,9 +435,6 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\widget\jgl_contener.h">
       <Filter>JGL\includes\widget</Filter>
     </ClInclude>
-    <ClInclude Include="includes\Erelia_tactical_controller.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
     <ClInclude Include="includes\Erelia_icon_holder.h">
       <Filter>Includes</Filter>
     </ClInclude>
@@ -458,6 +458,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_reference_count.h">
       <Filter>JGL\includes\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Erelia_world.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Erelia_player_controller.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\erelia_minimap.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\erelia_player.h">
+      <Filter>Includes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

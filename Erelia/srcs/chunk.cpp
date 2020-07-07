@@ -12,8 +12,8 @@ Chunk::Chunk(jgl::Material* p_material, Vector3 p_pos)
 {
 	_material = p_material;
 	_pos = p_pos;
-	_voxels = new Voxel * **[static_cast<int>(floor(chunk_size.x))];
-	int height = static_cast<int>(chunk_size.y) / 4;
+
+	_voxels = new Voxel ***[static_cast<int>(floor(chunk_size.x))];
 	for (int i = 0; i < chunk_size.x; i++)
 	{
 		_voxels[i] = new Voxel **[static_cast<int>(floor(chunk_size.y))];
@@ -27,6 +27,7 @@ Chunk::Chunk(jgl::Material* p_material, Vector3 p_pos)
 			}
 		}
 	}
+
 	_mesh = new jgl::Mesh(0);
 	init_mesh(_mesh);
 	_mesh->set_material(_material, true);
@@ -51,11 +52,10 @@ Chunk::~Chunk()
 		}
 		delete[] _voxels[i];
 	}
-	delete [] _voxels;
+	delete[] _voxels;
 	delete _mesh;
 	delete _mesh_transparent;
 }
-
 
 void Chunk::create_base_content_data(Vector2 unit)
 {
@@ -103,23 +103,25 @@ void Chunk::init_mesh(jgl::Mesh *target)
 	}
 }
 
-bool Chunk::need_bake(Board* board, Vector3 p_pos)
+bool Chunk::need_bake(World* world, Vector3 p_pos)
 {
-	Voxel* actual = board->voxels(p_pos);
+	Voxel* actual = world->voxels(p_pos);
 	Voxel* tmp_next;
 
+	if (actual->type() < 0)
+		return (false);
 	float base_alpha = block_alpha_array[actual->type()];
 	for (size_t i = 3; i < 9; i++)
 	{
-		tmp_next = board->voxels(p_pos + voxel_neighbour[i]);
-		float tmp_alpha = (tmp_next == nullptr || tmp_next->type() == -1 ? base_alpha : block_alpha_array[tmp_next->type()]);
-		if (tmp_next == nullptr || tmp_next->type() == -1 || tmp_alpha != base_alpha)
+		tmp_next = world->voxels(p_pos + voxel_neighbour[i]);
+		float tmp_alpha = (tmp_next == nullptr || tmp_next->type() <= AIR_BLOCK ? base_alpha : block_alpha_array[tmp_next->type()]);
+		if (tmp_next == nullptr || tmp_next->type() <= AIR_BLOCK || tmp_alpha != base_alpha)
 			return (true);
 	}
 	return (false);
 }
 
-void Chunk::bake(Board* board, int level, jgl::Mesh **base_mesh)
+void Chunk::bake(World* world, int level, jgl::Mesh **base_mesh)
 {
 	if (level < 0 || level >= chunk_size.y)
 		return;
@@ -138,11 +140,11 @@ void Chunk::bake(Board* board, int level, jgl::Mesh **base_mesh)
 			for (int k = 0; k < chunk_size.z; k++)
 			{
 				Voxel* tmp_voxel = _voxels[j][i][k];
-				if (tmp_voxel->type() != -1 && need_bake(board, Vector3(starter_pos.x + j, starter_pos.y + i, starter_pos.z + k)) == true)
+				if (tmp_voxel->type() != -1 && need_bake(world, Vector3(starter_pos.x + j, starter_pos.y + i, starter_pos.z + k)) == true)
 				{
 					jgl::Mesh* target = (block_alpha_array[tmp_voxel->type()] != 1 ? _mesh_transparent : _mesh);
 					jgl::Mesh_part* target_part = target->check_part(i);
-					tmp_cube = tmp_voxel->construct(board, _pos, tmp_cube);
+					tmp_cube = tmp_voxel->construct(world, _pos, tmp_cube);
 					if (tmp_cube != nullptr)
 					{
 						jgl::Mesh_part* other = tmp_cube->check_part(0);
@@ -163,39 +165,52 @@ void Chunk::bake(Board* board, int level, jgl::Mesh **base_mesh)
 	_mesh_transparent->check_part(level)->bake(_mesh->rot_matrix());
 }
 
-void Chunk::bake(Board* board)
+void Chunk::bake(World* world)
 {
 	jgl::Mesh* tmp_cube = nullptr;
 
 	for (size_t i = 0; i < chunk_size.y; i++)
-		bake(board, i, &tmp_cube);
+		bake(world, i, &tmp_cube);
 
 	if (tmp_cube != nullptr)
 		delete tmp_cube;
 }
 
-void Chunk::render(jgl::Camera* camera)
+void Chunk::render(jgl::Camera* camera, const jgl::Viewport* viewport)
 {
-	_mesh->render_differed(camera, _pos * chunk_size);
-	for (int i = 0; i < chunk_size.x; i++)
+	render(camera, static_cast<size_t>(chunk_size.y), viewport);
+}
+
+void Chunk::render(jgl::Camera* camera, int height, const jgl::Viewport* viewport)
+{
+	for (int j = 0; j < chunk_size.y && j < height; j++)
 	{
-		for (int j = 0; j < chunk_size.y; j++)
+		_mesh->parts(j)->render(_mesh, camera, _pos * chunk_size, viewport);
+		for (int i = 0; i < chunk_size.x; i++)
 		{
 			for (int k = 0; k < chunk_size.z; k++)
 			{
 				Voxel* tmp = _voxels[i][j][k];
 				if (tmp->scenery() != nullptr)
 				{
-					tmp->scenery()->render(camera, _pos * chunk_size + Vector3(i, j, k) + Vector3(0.5f, 1.0f, 0.5f));
+					tmp->scenery()->render(camera, _pos * chunk_size + Vector3(i, j, k) + Vector3(0.5f, 1.0f, 0.5f), viewport);
 				}
 			}
 		}
 	}
 }
 
-void Chunk::render_transparent(jgl::Camera* camera)
+void Chunk::render_transparent(jgl::Camera* camera, const jgl::Viewport* viewport)
 {
-	_mesh_transparent->render_differed(camera, _pos * chunk_size);
+	render_transparent(camera, static_cast<size_t>(chunk_size.y), viewport);
+}
+
+void Chunk::render_transparent(jgl::Camera* camera, int height, const jgl::Viewport* viewport)
+{
+	for (int j = 0; j < chunk_size.y && j < height; j++)
+	{
+		_mesh_transparent->parts(j)->render(_mesh_transparent, camera, _pos * chunk_size, viewport);
+	}
 }
 
 void Chunk::place_block(Vector3 pos, int type)
@@ -206,11 +221,11 @@ void Chunk::place_block(Vector3 pos, int type)
 	int x = static_cast<int>(floor(pos.x));
 	int y = static_cast<int>(floor(pos.y));
 	int z = static_cast<int>(floor(pos.z));
-
+	
 	_voxels[x][y][z]->set_type(type);
 }
 
-void Chunk::place_scenery(jgl::Vector3 pos, Scenery* p_scenery)
+void Chunk::place_scenery(World *world, jgl::Vector3 pos, Scenery* p_scenery)
 {
 	if (pos.x < 0 || pos.x >= chunk_size.x || pos.y < 0 || pos.y >= chunk_size.y || pos.z < 0 || pos.z >= chunk_size.z)
 		return;
@@ -219,7 +234,40 @@ void Chunk::place_scenery(jgl::Vector3 pos, Scenery* p_scenery)
 	int y = static_cast<int>(floor(pos.y));
 	int z = static_cast<int>(floor(pos.z));
 
-	_voxels[x][y][z]->set_scenery(p_scenery);
+	Scenery* actual = voxels(Vector3(x, y, z))->scenery();
+
+	voxels(Vector3(x, y, z))->set_scenery(p_scenery);
+	if (actual != nullptr)
+	{
+		for (float i = 0; i < actual->size().x; i++)
+			for (float j = 0; j < actual->size().y; j++)
+				for (float h = 0; h < actual->size().z; h++)
+				{
+					float x = pos.x + i / 2;
+					float y = pos.y + j + 1;
+					float z = pos.z + h / 2;
+
+					Voxel* tmp = world->voxels(Vector3(x, y, z) + 0.5f + _pos * chunk_size);
+					if (tmp != nullptr)
+						tmp->set_type(AIR_BLOCK);
+				}
+	}
+	if (p_scenery != nullptr)
+	{
+		for (float i = 0; i < p_scenery->size().x; i++)
+			for (float j = 0; j < p_scenery->size().y; j++)
+				for (float h = 0; h < p_scenery->size().z; h++)
+				{
+					float x = pos.x + i / 2;
+					float y = pos.y + j + 1;
+					float z = pos.z + h / 2;
+
+					Voxel* tmp = world->voxels(Vector3(x, y, z) + 0.5f + _pos * chunk_size);
+					if (tmp != nullptr)
+						tmp->set_type(SCENERY_BLOCK);
+				}
+	}
+	
 }
 
 Voxel* Chunk::voxels(Vector3 tmp_pos)

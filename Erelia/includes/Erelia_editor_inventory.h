@@ -4,6 +4,7 @@
 #include "erelia_shortcut_bar.h"
 #include "erelia_editor_inventory_tab.h"
 #include "erelia_icon_holder.h"
+#include "Erelia_player_controller.h"
 
 enum class Tab_type
 {
@@ -18,7 +19,7 @@ protected:
 	size_t _selected_tab_index;
 	Item_slot* _clicked_slot;
 
-	jgl::Contener* _contener;
+	Player_controller* _controller;
 	Icon_holder* _icon_holder;
 	Shortcut_bar* _shortcut_bar;
 	jgl::Frame* _inventory_frame;
@@ -26,7 +27,7 @@ protected:
 	jgl::Array<jgl::Button*> _library_button;
 
 public:
-	Editor_inventory(jgl::Widget* parent);
+	Editor_inventory(Player_controller *controller, jgl::Widget* parent);
 	~Editor_inventory();
 
 	Shortcut_bar* shortcut_bar() { return (_shortcut_bar); }
@@ -41,8 +42,8 @@ public:
 	Item_slot* find_inventory_slot();
 	Item_slot* find_slot() { Item_slot* tmp = find_shortcut_slot(); if (tmp == nullptr)tmp = find_inventory_slot(); return (tmp); }
 
-	void disable() { _inventory_frame->desactivate(); _shortcut_bar->set_frozen(false); _item_library[_selected_tab_index]->reset(); }
-	void enable() { _inventory_frame->activate(); _shortcut_bar->set_frozen(true); _item_library[_selected_tab_index]->reset(); }
+	void disable();
+	void enable();
 	bool is_disable() { return (_inventory_frame->is_active()); }
 	bool is_enable() { return (!_inventory_frame->is_active()); }
 

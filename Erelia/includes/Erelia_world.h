@@ -5,27 +5,30 @@
 
 #include "Erelia_chunk.h"
 
-class Board
+class World
 {
 private:
 	std::map<Vector3, Chunk*> _chunks;
 	std::vector<Entity*> _entities;
 	jgl::Material* _material;
+	void clear_world();
 
 public:
-	Board();
-	Board(jgl::String path);
-	~Board();
+	World();
+	World(jgl::String path);
+	~World();
 
 	void reload(jgl::String);
 
 	void empty_initialize();
 	void prepare_empty_chunk(jgl::Vector3 chunk_pos);
+	void create_voxel_array();
 
 	void set_block(Vector3 pos, int type);
 	void place_block(Vector3 pos, int type);
 	void remove_block(Vector3 pos);
 
+	bool can_place_scenery(jgl::Vector3 pos, Scenery* p_scenery);
 	void place_scenery(jgl::Vector3 pos, Scenery* p_scenery);
 	void remove_scenery(jgl::Vector3 pos);
 
@@ -43,7 +46,8 @@ public:
 	Voxel* voxels(Vector3 pos);
 
 	void update();
-	void render(jgl::Camera* camera);
+	void render(jgl::Camera* camera, const jgl::Viewport* viewport = nullptr);
+	void render(jgl::Camera* camera, int height, const jgl::Viewport* viewport = nullptr);
 
 	void save(std::fstream& file);
 };

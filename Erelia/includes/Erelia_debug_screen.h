@@ -123,7 +123,7 @@ public:
 
 	int calc_line_heigth(int heigth)
 	{
-		return (static_cast<int>(_begin_pos.y) + heigth * (_text_size + (heigth == 0 ? 0 : _text_size / 2)));
+		return (heigth * (_text_size + (heigth == 0 ? 0 : _text_size / 2)));
 	}
 
 	void set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
@@ -140,11 +140,11 @@ public:
 				{
 					if (_line_order[type][i]->text_image == nullptr)
 						_line_order[type][i]->create_text_image(_text_size);
-					Vector2 pos = _begin_pos + Vector2(0, calc_line_heigth(i)) + self_anchor();
+					Vector2 pos = _begin_pos + Vector2(0, calc_line_heigth(i));
 					if (_line_order[type][i]->align != jgl::alignment::left)
 					{
 						int len = static_cast<int>(_line_order[type][i]->text_image->size().x);
-						pos.x = (_line_order[type][i]->align == jgl::alignment::right ? g_application->size().x - _begin_pos.x - len : g_application->size().x / 2 - len / 2);
+						pos.x = (_line_order[type][i]->align == jgl::alignment::right ? _viewport->area().x - _begin_pos.x - len : _viewport->area().x / 2 - len / 2);
 					}
 					if (_line_order[type][i]->text_image != nullptr)
 						_line_order[type][i]->text_image->draw(pos, _line_order[type][i]->text_image->size(), 1.0f, _viewport);

@@ -9,7 +9,8 @@ enum class item_type
 {
 	error = -1,
 	item = 0,
-	block = 1
+	block = 1,
+	scenery = 2
 };
 
 struct Item
@@ -48,7 +49,12 @@ Item* get_item(int index);
 extern jgl::Sprite_sheet* icon_tile;
 
 #define NB_ITEM 256
+#define START_BLOCK 0
 #define NB_BLOCK 50
+#define START_SCENERY 100
+#define NB_SCENERY 20
+
+extern Scenery* scenery_list[NB_SCENERY];
 
 extern Item* item_list[NB_ITEM];
 

@@ -17,6 +17,7 @@ protected:
 	jgl::w_box_component _box;
 public:
 	static jgl::Vector2 size() { return (_size); }
+	static void set_size(jgl::Vector2 p_size) { _size = p_size; }
 
 	Item_slot(jgl::Sprite_sheet* p_icon_tile, Item* p_item, jgl::Widget* p_parent = nullptr);
 	void set_state(bool p_state) { _state = p_state; }

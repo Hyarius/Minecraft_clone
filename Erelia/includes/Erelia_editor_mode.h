@@ -4,21 +4,21 @@
 #include "jgl.h"
 #include "Erelia_game_mode.h"
 #include "Erelia_debug_screen.h"
+#include "Erelia_minimap.h"
 #include "Erelia_editor_inventory.h"
-#include "Erelia_tactical_controller.h"
+#include "Erelia_player_controller.h"
 
 class Editor_visualizer : public jgl::Widget
 {
 private:
-	Tactical_controller* _controller = nullptr;
+	Player_controller* _controller = nullptr;
 
 	jgl::Mesh* _pointer = nullptr;
-	jgl::Array<Vector3> _pos_vector;
 	Vector3 _first_voxel;
 	Vector3 _second_voxel;
 
 public:
-	Editor_visualizer(Tactical_controller* p_controller, jgl::Widget* p_parent);
+	Editor_visualizer(Player_controller* p_controller, jgl::Widget* p_parent);
 	~Editor_visualizer()
 	{
 		if (_pointer != nullptr)
@@ -34,14 +34,18 @@ class Editor_mode : public Game_mode
 {
 protected:
 	class Game_engine* _engine;
-	Board* _board = nullptr;
+	World* _world = nullptr;
+	Player* _player;
+
+	bool _dodge = false;
 
 	jgl::Contener* _editor_contener;
 
 	File_menu* _saver_menu;
 	File_menu* _loader_menu;
 
-	Tactical_controller* _controller = nullptr;
+	Player_controller* _controller = nullptr;
+	Minimap* _minimap = nullptr;
 
 	Editor_inventory* _editor_inventory = nullptr;
 
@@ -67,10 +71,11 @@ protected:
 	bool _edited;
 
 public:
-	Editor_mode(class Game_engine* p_engine, Board* p_board);
+	Editor_mode(class Game_engine* p_engine, World* p_world, Player* p_player);
 
-
+	bool dodge() { return (_dodge); }
 	bool edited() { return (_edited); }
+	void set_dodge(bool p_state) { _dodge = p_state; }
 	void set_edited(bool p_state) { _edited = p_state; _timer = _actual_tick + _delta_time; }
 
 	void create_editor_panel();
@@ -83,11 +88,11 @@ public:
 	File_menu* loader_menu() {return (_loader_menu);}
 
 	bool voxel_raycast(Vector3 pos, Vector3 direction, Vector3* voxel_source, Vector3* voxel_target);
-	void handle_multibloc_pos(Vector3 A, Vector3 B, int type);
-	void handle_change_block(Vector3 A, Vector3 B, int type);
+	void use_item_left(Vector3 A, Vector3 B, Item* item);
+	void use_item_right(Vector3 A, Vector3 B, Item *item);
 	Editor_inventory* editor_inventory() { return (_editor_inventory); }
 	jgl::Frame* echap_menu_frame() { return (_echap_menu_frame); }
-
+	Player_controller* controller() { return (_controller); }
 	void update();
 	bool handle_keyboard();
 	bool handle_mouse();

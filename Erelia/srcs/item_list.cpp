@@ -215,17 +215,17 @@ jgl::String scenery_name_list[NB_SCENERY] = {
 void create_item_list()
 {
 	create_scenery_list();
-	int id = 0;
 
-	for (int i = 0; i < NB_BLOCK; i++)
+	for (size_t i = 0; i < NB_ITEM; i++)
+		item_list[i] = nullptr;
+	for (int i = START_BLOCK; i < START_BLOCK + NB_BLOCK; i++)
 	{
-		item_list[id] = new Block_item(block_name_list[i], id, block_icon_list[i], id);
-		id++;
+		item_list[i] = new Block_item(block_name_list[i], i, block_icon_list[i], i);
 	}
-	for (int i = 0; i < NB_SCENERY; i++)
+	for (int i = START_SCENERY; i < START_SCENERY + NB_SCENERY; i++)
 	{
-		item_list[id] = new Scenery_item(scenery_name_list[i], id, scenery_icon_list[i], i);
-		id++;
+		size_t tmp = i - START_SCENERY;
+		item_list[i] = new Scenery_item(scenery_name_list[tmp], tmp, scenery_icon_list[tmp], tmp);
 	}
 }
 
@@ -233,8 +233,11 @@ void delete_item_list()
 {
 	delete_scenery_list();
 
-	for (int i = 0; i < NB_BLOCK + NB_SCENERY; i++)
-		delete item_list[i];
+	for (int i = 0; i < NB_ITEM; i++)
+	{
+		if (item_list[i] != nullptr)
+			delete item_list[i];
+	}
 }
 
 Item* get_item(int index)

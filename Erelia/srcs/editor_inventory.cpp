@@ -34,8 +34,9 @@ void Editor_inventory::select_tab(size_t index)
 	_item_library[index]->reset();
 }
 
-Editor_inventory::Editor_inventory(jgl::Widget* parent) : jgl::Widget(parent)
+Editor_inventory::Editor_inventory(Player_controller* controller, jgl::Widget* parent) : jgl::Widget(parent)
 {
+	_controller = controller;
 	_selected_tab_index = 0;
 	_clicked_slot = nullptr;
 	_shortcut_bar = new Shortcut_bar(this);
@@ -58,7 +59,7 @@ Editor_inventory::Editor_inventory(jgl::Widget* parent) : jgl::Widget(parent)
 	select_tab(0);
 	
 	_icon_holder = new Icon_holder(icon_tile, this);
-	_icon_holder->send_back();
+	_icon_holder->send_front();
 	_icon_holder->activate();
 }
 
@@ -84,6 +85,24 @@ Item_slot* Editor_inventory::find_shortcut_slot()
 	return (nullptr);
 }
 
+void Editor_inventory::disable()
+{
+	g_mouse->place(g_application->size() / 2);
+	g_mouse->actualize();
+	_controller->set_frozen(false);
+	_inventory_frame->desactivate();
+	_shortcut_bar->set_frozen(false);
+	_item_library[_selected_tab_index]->reset();
+}
+
+void Editor_inventory::enable()
+{
+	_controller->set_frozen(true);
+	_inventory_frame->activate();
+	_shortcut_bar->set_frozen(true);
+	_item_library[_selected_tab_index]->reset();
+}
+
 Item_slot* Editor_inventory::find_inventory_slot()
 {
 	Item_slot* tmp;
@@ -104,7 +123,7 @@ bool Editor_inventory::toggle()
 
 bool Editor_inventory::handle_keyboard()
 {
-	if (jgl::get_key(jgl::key::tab) == jgl::key_state::release)
+	if (jgl::get_key(jgl::key::e) == jgl::key_state::release)
 	{
 		if (toggle() == false)
 		{
@@ -163,8 +182,9 @@ bool Editor_inventory::handle_mouse()
 
 void Editor_inventory::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 {
+	Item_slot::set_size(p_area.x / 11 > 80 ? 80 : p_area.x / 11);
 	Vector2 size = Vector2(Item_slot::size().x * 9 + 60, Item_slot::size().y + 20);
-	Vector2 pos = Vector2((g_application->size().x - size.x) / 2, g_application->size().y - size.y * 1.2f);
+	Vector2 pos = Vector2((p_area.x - size.x) / 2, p_area.y - size.y * 1.2f);
 	_shortcut_bar->set_geometry(pos, size);
 
 	Vector2 nb_element = Vector2(library_nb_element.x + button_nb_element.x, library_nb_element.y);
@@ -172,7 +192,7 @@ void Editor_inventory::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 		Item_slot::size().x * (nb_element.x) + 5 * (nb_element.x - 1) + 30,
 		Item_slot::size().y * nb_element.y - 5 * (nb_element.y - 1) + 20
 	);
-	pos.x = (g_application->size().x - size.x) / 2;
+	pos.x = (p_area.x - size.x) / 2;
 	pos.y = (pos.y - size.y) / 2;
 
 	_inventory_frame->set_geometry(pos, size + Vector2(20, 0));
@@ -193,7 +213,7 @@ void Editor_inventory::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)
 		_library_button[i]->set_geometry(button_pos, button_size);
 	}
 
-	_icon_holder->set_geometry(0, g_application->size());
+	_icon_holder->set_geometry(0, p_area);
 
 }
 
