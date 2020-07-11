@@ -84,7 +84,10 @@ void World::prepare_empty_chunk(jgl::Vector3 chunk_pos)
 			for (size_t j = 0; j < chunk_size.z; j++)
 			{
 				Vector3 voxel_pos = this->voxel_pos(chunk_pos * chunk_size + jgl::Vector3(i, k, j));
-				_chunks[chunk_pos]->place_block(voxel_pos, 0);
+				if (i == 0 || i == chunk_size.x - 1 || j == 0 || j == chunk_size.z - 1)
+					_chunks[chunk_pos]->place_block(voxel_pos, 1);
+				else
+					_chunks[chunk_pos]->place_block(voxel_pos, 0);
 			}
 }
 
@@ -113,21 +116,61 @@ void World::remove_chunk(jgl::Vector3 chunk_pos)
 	}
 }
 
-void World::render(jgl::Camera* camera, const jgl::Viewport* viewport)
+void World::render(jgl::Camera* camera, Player* player, const jgl::Viewport* viewport)
 {
-	render(camera, static_cast<size_t>(chunk_size.y), viewport);
+	render(camera, player, static_cast<size_t>(chunk_size.y), viewport);
 }
 
-void World::render(jgl::Camera* camera, int height, const jgl::Viewport* viewport)
+void World::render(jgl::Camera* camera, Player* player, int height, const jgl::Viewport* viewport)
 {
-	for (auto tmp : _chunks)
+	int distance = 6;
+
+	Vector3 player_chunk = ((player->pos() * Vector3(1, 0, 1)) / chunk_size).floor();
+	Vector3 player_direction = (player->body()->forward() * Vector3(-1, 0, 1)).normalize();
+
+	for (int i = player_chunk.x - distance; i < player_chunk.x + distance; i++)
+	{
+		for (int j = player_chunk.z - distance; j < player_chunk.z + distance; j++)
+		{
+			Vector3 tmp = Vector3(i, 0, j);
+			float tmp_distance = tmp.distance(player_chunk);
+			if (tmp_distance <= distance + 0.5f)
+			{
+				Vector3 tmp_dir = tmp - player_chunk;
+
+				if (tmp_distance <= 1.1f || (player_direction.angle(tmp_dir)) <= 60.0f)
+				{
+					if (_chunks.count(tmp) == 0)
+						initiate_chunk(tmp);
+					_chunks[tmp]->render(camera, height, viewport);
+				}
+			}
+		}
+	}
+	for (int i = player_chunk.x - distance; i <= player_chunk.x + distance; i++)
+	{
+		for (int j = player_chunk.z - distance; j <= player_chunk.z + distance; j++)
+		{
+			Vector3 tmp = Vector3(i, 0, j);
+			float tmp_distance = tmp.distance(player_chunk);
+			if (tmp_distance <= distance)
+			{
+				Vector3 tmp_dir = tmp - player_chunk;
+				if (_chunks.count(tmp) != 0)
+					if (tmp_distance <= 1.1f || player_direction.angle(tmp_dir) <= 45.0f)
+						_chunks[tmp]->render_transparent(camera, height, viewport);
+			}
+		}
+	}
+
+	/*for (auto tmp : _chunks)
 	{
 		tmp.second->render(camera, height, viewport);
 	}
 	for (auto tmp : _chunks)
 	{
 		tmp.second->render_transparent(camera, height, viewport);
-	}
+	}*/
 }
 
 void World::update()

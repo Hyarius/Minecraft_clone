@@ -4,7 +4,7 @@ Minimap::Minimap(World* p_world, Player* p_player, jgl::Widget* p_parent) : jgl:
 {
 	_world = p_world;
 	_player = p_player;
-	_camera = new jgl::Camera(_player->pos() + jgl::Vector3(0, 20, 0), 45, g_application->size().x / g_application->size().y);
+	_camera = new jgl::Camera(_player->pos() + jgl::Vector3(0, 100, 0), 45, g_application->size().x / g_application->size().y);
 	_camera->look_at(_player->pos());
 }
 
@@ -26,6 +26,7 @@ void Minimap::render()
 	Vector3 tmp = _player->pos() + Vector3::up();
 	while (_world->voxels(tmp) != nullptr && _world->voxels(tmp)->type() <= AIR_BLOCK)
 		tmp.y++;
-	_world->render(_camera, static_cast<int>(tmp.y - 1), _viewport);
+	_world->render(_camera, _player, 20, _viewport);
+	//static_cast<int>(tmp.y - 1)
 	_player->body()->render(_camera, _viewport);
 }

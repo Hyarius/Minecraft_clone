@@ -107,7 +107,7 @@ bool Player_controller::handle_mouse()
 
 void Player_controller::render()
 {
-	_world->render(_camera, _viewport);
+	_world->render(_camera, _player, _viewport);
 	_player->body()->render(_camera, _viewport);
 }
 

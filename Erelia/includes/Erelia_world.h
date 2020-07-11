@@ -47,8 +47,8 @@ public:
 	Voxel* voxels(Vector3 pos);
 
 	void update();
-	void render(jgl::Camera* camera, const jgl::Viewport* viewport = nullptr);
-	void render(jgl::Camera* camera, int height, const jgl::Viewport* viewport = nullptr);
+	void render(jgl::Camera* camera, Player* player, const jgl::Viewport* viewport = nullptr);
+	void render(jgl::Camera* camera, Player* player, int height, const jgl::Viewport* viewport = nullptr);
 
 	void save(std::fstream& file);
 };
