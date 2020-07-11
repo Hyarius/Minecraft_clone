@@ -256,6 +256,9 @@
     <ClCompile Include="srcs\minimap.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_share_object.cpp">
+      <Filter>JGL\srcs\structure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Erelia.h">
@@ -470,6 +473,9 @@
     </ClInclude>
     <ClInclude Include="includes\erelia_player.h">
       <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_share_object.h">
+      <Filter>JGL\includes\structure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

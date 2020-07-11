@@ -12,6 +12,7 @@ private:
 
 public:
 	Minimap(World* p_world, Player* p_player, jgl::Widget* p_parent = nullptr);
+	~Minimap();
 
 	jgl::Camera* camera() { return (_camera); }
 

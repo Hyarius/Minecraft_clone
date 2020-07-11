@@ -1,5 +1,18 @@
 #include "erelia.h"
 
+Vector3 chunk_neighbour[9]
+{
+	{-1, 0, -1},
+	{0, 0, -1},
+	{1, 0, -1},
+	{-1, 0, 0},
+	{0, 0, 0},
+	{1, 0, 0},
+	{-1, 0, 1},
+	{0, 0, 1},
+	{1, 0, 1},
+};
+
 Vector3 voxel_vertices[13]{
 	Vector3(0.0f, 0.0f, 0.0f), // A
 	Vector3(1.0f, 0.0f, 0.0f), // B

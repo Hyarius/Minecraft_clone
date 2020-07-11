@@ -2,8 +2,6 @@
 
 Game_engine* g_engine;
 
-
-
 int main(int argc, char **argv)
 {
 	jgl::Application app = jgl::Application("Erelia", jgl::Vector2(0.8f, 0.8f));

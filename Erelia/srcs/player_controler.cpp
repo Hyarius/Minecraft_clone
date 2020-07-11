@@ -7,11 +7,13 @@ Player_controller::Player_controller(World* p_world, Player* p_player, jgl::Came
 	_player = p_player;
 	_camera = new jgl::Camera(0, 45, g_application->size().x / g_application->size().y);
 
-	_camera->place(Vector3(0.0f, 2.5f, 0.0f));
+	_camera->place(p_player->pos() + Vector3(0, 1, 0));
 	_camera_target = _camera->pos() + Vector3(1, 0, 0);
 	_camera->look_at(_camera_target);
 	_camera->set_light_direction(Vector3(-0.3f, -1.0f, -0.5f).normalize());
 	_camera->set_light_position(Vector3(0, 100, 0));
+	g_mouse->place(g_application->size() / 2);
+	g_mouse->actualize();
 }
 
 Player_controller::~Player_controller()
@@ -30,8 +32,8 @@ void Player_controller::move_camera(Vector3 delta)
 
 void Player_controller::rotate_camera(float yaw, float pitch)
 {
-	if (_camera->pitch() >= -88.0f - pitch && pitch > 0 ||
-		_camera->pitch() <= 88.0f - pitch && pitch < 0)
+	if (_camera->pitch() >= -87.0f - pitch && pitch > 0 ||
+		_camera->pitch() <= 87.0f - pitch && pitch < 0)
 	{
 		_camera_target = jgl::rotate_point(_camera_target, _camera->pos(), _camera->right(), pitch);
 	}

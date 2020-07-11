@@ -6,16 +6,16 @@
 class Player
 {
 private:
-	bool _fly_mode = false;
+	bool _fly_mode = true;
 	float _move_speed = 0.15f;
 	float _rot_speed = 0.2f;
 
 	jgl::Mesh* _body = nullptr;
 
 public:
-	Player()
+	Player(jgl::Vector3 p_pos)
 	{
-		_body = jgl::primitive_cube(jgl::Vector3(0, 2, 0), 0, jgl::Vector3(1, 2, 1), jgl::Color(255, 255, 255), true);
+		_body = jgl::primitive_cube(p_pos, 0, jgl::Vector3(1, 2, 1), jgl::Color(255, 255, 255), true);
 	}
 	~Player()
 	{

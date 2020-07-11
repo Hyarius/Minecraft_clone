@@ -20,7 +20,7 @@ public:
 
 	void reload(jgl::String);
 
-	void empty_initialize();
+	void initiate_chunk(Vector3 pos);
 	void prepare_empty_chunk(jgl::Vector3 chunk_pos);
 	void create_voxel_array();
 
@@ -41,6 +41,7 @@ public:
 	jgl::Material* material() { return (_material); }
 
 	Vector3 chunk_pos(Vector3 abs_pos);
+	Vector3 voxel_pos(Vector3 chunk_pos, Vector3 pos);
 	Vector3 voxel_pos(Vector3 abs_pos);
 	Chunk* chunks(Vector3 chunk_pos);
 	Voxel* voxels(Vector3 pos);

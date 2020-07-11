@@ -50,6 +50,7 @@
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_plot.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_pool.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_shader_handler.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_share_object.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_string.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_unique_string.cpp" />
     <ClCompile Include="..\..\..\..\..\..\Developement\JGL\srcs\structure\jgl_tileset.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_plot.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_pool.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_reference_count.h" />
+    <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_share_object.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_string.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_unique_string.h" />
     <ClInclude Include="..\..\..\..\..\..\Developement\JGL\includes\structure\jgl_system.h" />

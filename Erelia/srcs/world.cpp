@@ -1,23 +1,15 @@
 #include "erelia.h"
 
-void World::empty_initialize()
-{
-	int min = -1;
-	int max = 1;
-
-	for (int i = min; i <= max; i++)
-		for (int j = min; j <= max; j++)
-		{
-			Vector3 tmp(i, 0, j);
-			add_chunk(tmp);
-			prepare_empty_chunk(tmp);
-			baking_chunk(tmp);
-		}
-}
-
 void World::create_voxel_array()
 {
 
+}
+
+void World::initiate_chunk(Vector3 pos)
+{
+	add_chunk(pos);
+	prepare_empty_chunk(pos);
+	baking_chunk(pos);
 }
 
 World::World()
@@ -27,7 +19,8 @@ World::World()
 	_material = new jgl::Material("World Material");
 	_material->diffuse_texture = new jgl::Image("ressources/texture/tile_tileset.png");
 	Chunk::create_base_content_data(Vector2(1, 1) / Vector2(40, 30));
-	empty_initialize();
+	
+	initiate_chunk(0);
 }
 
 void World::clear_world()
@@ -52,7 +45,7 @@ void World::reload(jgl::String path)
 	clear_world();
 	std::fstream input_file = jgl::open_file(path, std::ios_base::in);
 	if (input_file.is_open() == false)
-		empty_initialize();
+		error_exit(1, "Error while opening map " + path);
 	else
 	{
 		size_t i = 0;
@@ -84,35 +77,23 @@ World::World(jgl::String path)
 	reload(path);
 }
 
-Vector3 tmp_neightbour[8]{
-	{1, 0, 0},
-	{0, 0, 1},
-	{-1, 0, 0},
-	{0, 0, -1},
-	{1, 0, 1},
-	{1, 0, -1},
-	{-1, 0, 1},
-	{-1, 0, -1}
-};
-
 void World::prepare_empty_chunk(jgl::Vector3 chunk_pos)
 {
-	Vector3 pos = 0;
 	for (size_t i = 0; i < chunk_size.x; i++)
-		for (size_t j = 0; j < chunk_size.z; j++)
-		{
-			Vector3 voxel_pos = this->voxel_pos(chunk_pos * chunk_size + jgl::Vector3(i, size_t(0), j));
-			_chunks[chunk_pos]->place_block(voxel_pos, 0);
-		}
+		for (size_t k = 0; k < chunk_size.y / 2; k++)
+			for (size_t j = 0; j < chunk_size.z; j++)
+			{
+				Vector3 voxel_pos = this->voxel_pos(chunk_pos * chunk_size + jgl::Vector3(i, k, j));
+				_chunks[chunk_pos]->place_block(voxel_pos, 0);
+			}
 }
 
 void World::baking_chunk(jgl::Vector3 chunk_pos)
 {
-	_chunks[chunk_pos]->bake(this);
-	for (size_t i = 0; i < 8; i++)
+	for (size_t i = 0; i < 9; i++)
 	{
-		if (_chunks.count(chunk_pos + tmp_neightbour[i]) != 0)
-			_chunks[chunk_pos + tmp_neightbour[i]]->bake(this);
+		if (_chunks.count(chunk_pos + chunk_neighbour[i]) != 0)
+			_chunks[chunk_pos + chunk_neighbour[i]]->bake(this);
 	}
 }
 
@@ -125,10 +106,10 @@ void World::add_chunk(jgl::Vector3 chunk_pos)
 void World::remove_chunk(jgl::Vector3 chunk_pos)
 {
 	_chunks.erase(chunk_pos);
-	for (size_t i = 0; i < 8; i++)
+	for (size_t i = 0; i < 9; i++)
 	{
-		if (_chunks.count(chunk_pos + tmp_neightbour[i]) != 0)
-			_chunks[chunk_pos + tmp_neightbour[i]]->bake(this);
+		if (_chunks.count(chunk_pos + chunk_neighbour[i]) != 0)
+			_chunks[chunk_pos + chunk_neighbour[i]]->bake(this);
 	}
 }
 
@@ -139,21 +120,14 @@ void World::render(jgl::Camera* camera, const jgl::Viewport* viewport)
 
 void World::render(jgl::Camera* camera, int height, const jgl::Viewport* viewport)
 {
-	float dist = 6;
-	for (float x = -(dist / 2); x <= dist / 2; x++)
-		for (float z = -(dist / 2); z <= dist / 2; z++)
-		{
-			Vector3 tmp = Vector3(x + camera->pos().x / chunk_size.x, 0.0f, z + camera->pos().z / chunk_size.z).floor();
-			if (_chunks.count(tmp) != 0)
-				_chunks[tmp]->render(camera, height, viewport);
-		}
-	for (float x = -(dist / 2); x <= dist / 2; x++)
-		for (float z = -(dist / 2); z <= dist / 2; z++)
-		{
-			Vector3 tmp = Vector3(x + camera->pos().x / chunk_size.x, 0.0f, z + camera->pos().z / chunk_size.z).floor();
-			if (_chunks.count(tmp) != 0)
-				_chunks[tmp]->render_transparent(camera, height, viewport);
-		}
+	for (auto tmp : _chunks)
+	{
+		tmp.second->render(camera, height, viewport);
+	}
+	for (auto tmp : _chunks)
+	{
+		tmp.second->render_transparent(camera, height, viewport);
+	}
 }
 
 void World::update()
@@ -192,11 +166,9 @@ void World::place_block(Vector3 pos, int type)
 	if (voxels(voxel_pos) != nullptr)
 	{
 		tmp_chunk->place_block(voxel_pos, type);
-		for (int j = -1; j <= 1; j++)
-			tmp_chunk->bake(this , static_cast<int>(voxel_pos.y) + j);
-		for (size_t i = 0; i < 8; i++)
+		for (size_t i = 0; i < 9; i++)
 		{
-			Vector3 other = chunk_pos(pos + tmp_neightbour[i]);
+			Vector3 other = chunk_pos(pos + chunk_neighbour[i]);
 			if (tmp_chunk_pos != other && chunks(other) != nullptr)
 			{
 				for (int j = -1; j <= 1; j++)
@@ -255,12 +227,11 @@ void World::remove_scenery(jgl::Vector3 pos)
 
 Chunk* World::chunks(Vector3 chunk_pos)
 {
-	if (_chunks.count(chunk_pos) == 0)
+	if (_chunks.count(chunk_pos.floor()) == 0)
 		return (nullptr);
 
 	return (_chunks[chunk_pos]);
 }
-
 
 Vector3 World::chunk_pos(Vector3 abs_pos)
 {
@@ -269,19 +240,25 @@ Vector3 World::chunk_pos(Vector3 abs_pos)
 	return (result);
 }
 
+Vector3 World::voxel_pos(Vector3 tmp, Vector3 pos)
+{
+	Vector3 result = pos - tmp * chunk_size;
+	return (result);
+}
+
 Vector3 World::voxel_pos(Vector3 abs_pos)
 {
-	Vector3 result = abs_pos.floor() - chunk_pos(abs_pos) * chunk_size;
-	return (result);
+	return (voxel_pos(chunk_pos(abs_pos), abs_pos));
 }
 
 Voxel* World::voxels(Vector3 pos)
 {
-	Chunk* tmp_chunk = chunks(chunk_pos(pos));
+	Vector3 tmp = chunk_pos(pos);
+	Chunk* tmp_chunk = chunks(tmp);
 	if (tmp_chunk == nullptr)
 		return (nullptr);
 
-	Voxel* result = tmp_chunk->voxels(voxel_pos(pos));
+	Voxel* result = tmp_chunk->voxels(voxel_pos(tmp, pos));
 	return (result);
 }
 

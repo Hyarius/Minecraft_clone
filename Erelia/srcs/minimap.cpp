@@ -6,7 +6,12 @@ Minimap::Minimap(World* p_world, Player* p_player, jgl::Widget* p_parent) : jgl:
 	_player = p_player;
 	_camera = new jgl::Camera(_player->pos() + jgl::Vector3(0, 20, 0), 45, g_application->size().x / g_application->size().y);
 	_camera->look_at(_player->pos());
-	//_camera->rotate(Vector3(0, -90, 0));
+}
+
+Minimap::~Minimap()
+{
+	if (_camera != nullptr)
+		delete _camera;
 }
 
 void Minimap::set_geometry_imp(Vector2 p_anchor, Vector2 p_area)

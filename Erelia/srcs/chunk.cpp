@@ -6,7 +6,7 @@ extern Vector2 voxel_uv[35];
 extern Vector3 voxel_normales[9];
 extern jgl::Array<Vector2> block_uv_delta;
 
-Vector3 chunk_size = Vector3(9, 20, 9);
+Vector3 chunk_size = Vector3(16, 20, 16);
 
 Chunk::Chunk(jgl::Material* p_material, Vector3 p_pos)
 {
@@ -67,23 +67,23 @@ void Chunk::create_base_content_data(Vector2 unit)
 		_chunk_content_normales.resize(static_cast<int>(chunk_size.y));
 	for (int level = 0; level < chunk_size.y; level++)
 	{
-		if (_chunk_content_vertice[level].size() == 0)
+		if (_chunk_content_vertice[level]->size() == 0)
 		{
 			for (int j = level * 2; j <= (level + 1) * 2; j++)
 				for (int k = 0; k <= chunk_size.z * 2; k++)
 					for (int i = 0; i <= chunk_size.x * 2; i++)
-						_chunk_content_vertice[level].push_back(Vector3(i / 2.0f, j / 2.0f, k / 2.0f));
+						_chunk_content_vertice[level]->push_back(Vector3(i / 2.0f, j / 2.0f, k / 2.0f));
 		}
-		if (_chunk_content_uvs[level].size() == 0)
+		if (_chunk_content_uvs[level]->size() == 0)
 		{
 			for (size_t type = 0; type < block_uv_delta.size(); type++)
 				for (size_t i = 0; i < 35; i++)
-					_chunk_content_uvs[level].push_back(unit * (voxel_uv[i] + block_uv_delta[type]));
+					_chunk_content_uvs[level]->push_back(unit * (voxel_uv[i] + block_uv_delta[type]));
 		}
-		if (_chunk_content_normales[level].size() == 0)
+		if (_chunk_content_normales[level]->size() == 0)
 		{
 			for (size_t i = 0; i < 9; i++)
-				_chunk_content_normales[level].push_back(voxel_normales[i]);
+				_chunk_content_normales[level]->push_back(voxel_normales[i]);
 		}
 	}
 }
@@ -103,22 +103,34 @@ void Chunk::init_mesh(jgl::Mesh *target)
 	}
 }
 
-bool Chunk::need_bake(World* world, Vector3 p_pos)
+bool need_bake(World* world, Chunk ** chunk_array, Voxel** voxel_array, Vector3 p_pos)
 {
-	Voxel* actual = world->voxels(p_pos);
-	Voxel* tmp_next;
+	bool result = false;
+	Voxel* actual = chunk_array[4]->voxels(p_pos);
 
 	if (actual->type() < 0)
 		return (false);
 	float base_alpha = block_alpha_array[actual->type()];
-	for (size_t i = 3; i < 9; i++)
+	for (size_t i = 0; i < 9; i++)
 	{
-		tmp_next = world->voxels(p_pos + voxel_neighbour[i]);
-		float tmp_alpha = (tmp_next == nullptr || tmp_next->type() <= AIR_BLOCK ? base_alpha : block_alpha_array[tmp_next->type()]);
-		if (tmp_next == nullptr || tmp_next->type() <= AIR_BLOCK || tmp_alpha != base_alpha)
-			return (true);
+		Voxel* other_voxel = nullptr;
+		Chunk* other_chunk = nullptr;
+		Vector3 other_pos = p_pos + voxel_neighbour[i];
+		size_t chunk_index;
+
+		chunk_index = (other_pos.x < 0 ? 0 : (other_pos.x >= chunk_size.x ? 2 : 1)) + (other_pos.z < 0 ? 0 : (other_pos.z >= chunk_size.z ? 6 : 3));
+		other_chunk = chunk_array[chunk_index];
+
+		Vector3 rel_other_pos = other_pos - chunk_neighbour[chunk_index] * chunk_size * Vector3(1, 0, 1);
+		if (other_chunk != nullptr)
+			other_voxel = other_chunk->voxels(rel_other_pos);
+
+		voxel_array[i] = other_voxel;
+
+		if (other_voxel == nullptr || other_voxel->type() <= AIR_BLOCK || block_alpha_array[other_voxel->type()] != base_alpha)
+			result = true;
 	}
-	return (false);
+	return (result);
 }
 
 void Chunk::bake(World* world, int level, jgl::Mesh **base_mesh)
@@ -126,9 +138,38 @@ void Chunk::bake(World* world, int level, jgl::Mesh **base_mesh)
 	if (level < 0 || level >= chunk_size.y)
 		return;
 
-	jgl::Mesh* tmp_cube = *base_mesh;
+	jgl::Mesh* tmp_cube;
+	if (base_mesh != nullptr)
+		tmp_cube = *base_mesh;
+	else
+		tmp_cube = new jgl::Mesh(0, 0, 1);
 
+	Chunk* chunk_array[9] = {
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+	};
+	Voxel* voxel_array[9] = {
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+	};
 	Vector3 starter_pos = _pos * chunk_size;
+
+	for (size_t i = 0; i < 9; i++)
+		chunk_array[i] = world->chunks(this->pos() + chunk_neighbour[i]);
 
 	_mesh->check_part(level)->clear_baked();
 	_mesh_transparent->check_part(level)->clear_baked();
@@ -139,12 +180,12 @@ void Chunk::bake(World* world, int level, jgl::Mesh **base_mesh)
 		{
 			for (int k = 0; k < chunk_size.z; k++)
 			{
-				Voxel* tmp_voxel = _voxels[j][i][k];
-				if (tmp_voxel->type() != -1 && need_bake(world, Vector3(starter_pos.x + j, starter_pos.y + i, starter_pos.z + k)) == true)
+				if (need_bake(world, chunk_array, voxel_array, Vector3(j, i, k)) == true)
 				{
+					Voxel* tmp_voxel = _voxels[j][i][k];
 					jgl::Mesh* target = (block_alpha_array[tmp_voxel->type()] != 1 ? _mesh_transparent : _mesh);
 					jgl::Mesh_part* target_part = target->check_part(i);
-					tmp_cube = tmp_voxel->construct(world, _pos, tmp_cube);
+					tmp_cube = tmp_voxel->construct(world, chunk_array, voxel_array, tmp_cube);
 					if (tmp_cube != nullptr)
 					{
 						jgl::Mesh_part* other = tmp_cube->check_part(0);
@@ -183,6 +224,8 @@ void Chunk::render(jgl::Camera* camera, const jgl::Viewport* viewport)
 
 void Chunk::render(jgl::Camera* camera, int height, const jgl::Viewport* viewport)
 {
+	if (_mesh->parts().size() == 0)
+		jgl::error_exit(1, "Chunk not baked succesfully");
 	for (int j = 0; j < chunk_size.y && j < height; j++)
 	{
 		_mesh->parts(j)->render(_mesh, camera, _pos * chunk_size, viewport);
@@ -274,9 +317,9 @@ Voxel* Chunk::voxels(Vector3 tmp_pos)
 {
 	if(tmp_pos.x < 0 || tmp_pos.x >= chunk_size.x || tmp_pos.y < 0 || tmp_pos.y >= chunk_size.y || tmp_pos.z < 0 || tmp_pos.z >= chunk_size.z)
 		return nullptr;
-	int x = static_cast<int>(floor(tmp_pos.x));
-	int y = static_cast<int>(floor(tmp_pos.y));
-	int z = static_cast<int>(floor(tmp_pos.z));
+	int x = static_cast<int>(tmp_pos.x);
+	int y = static_cast<int>(tmp_pos.y);
+	int z = static_cast<int>(tmp_pos.z);
 	return (_voxels[x][y][z]);
 }
 

@@ -31,6 +31,7 @@ public:
 
 extern Game_engine* g_engine;
 
+void create_scenery(size_t index);
 void create_scenery_list();
 void delete_scenery_list();
 void create_item_list();

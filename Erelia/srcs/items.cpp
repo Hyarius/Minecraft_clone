@@ -39,5 +39,9 @@ void Scenery_item::use(jgl::Data data)
 	World* world = data.acces<World*>(0);
 	Vector3 coord = *(data.acces<Vector3*>(1));
 	
+	if (scenery_list[scenery_id] == nullptr)
+	{
+		create_scenery(scenery_id);
+	}
 	world->place_scenery(coord, scenery_list[scenery_id]);
 }

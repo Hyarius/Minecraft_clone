@@ -5,15 +5,21 @@
 
 #include "erelia_voxel.h"
 
+extern jgl::Vector3 chunk_neighbour[9];
+
 using jgl::Vector2;
 using jgl::Vector3;
 
 class Chunk
 {
 private:
-	static inline jgl::Array< jgl::Array< jgl::Vector3> > _chunk_content_vertice;
-	static inline jgl::Array< jgl::Array< jgl::Vector2> > _chunk_content_uvs;
-	static inline jgl::Array< jgl::Array< jgl::Vector3> > _chunk_content_normales;
+	//static inline jgl::Array< jgl::Array< jgl::Vector3 > > _chunk_content_vertice;
+	//static inline jgl::Array< jgl::Array< jgl::Vector2 > > _chunk_content_uvs;
+	//static inline jgl::Array< jgl::Array< jgl::Vector3 > > _chunk_content_normales;
+
+	static inline jgl::Array< jgl::share_object< jgl::Array< jgl::Vector3 > > > _chunk_content_vertice;
+	static inline jgl::Array< jgl::share_object< jgl::Array< jgl::Vector2 > > > _chunk_content_uvs;
+	static inline jgl::Array< jgl::share_object< jgl::Array< jgl::Vector3 > > > _chunk_content_normales;
 
 	jgl::Material* _material = nullptr;
 	jgl::Mesh* _mesh;
@@ -29,7 +35,6 @@ public:
 	~Chunk();
 
 	void init_mesh(jgl::Mesh* target);
-	bool need_bake(class World* world, Vector3 pos);
 	void bake(class World* world);
 	void bake(World* world, int y_index, jgl::Mesh** base_mesh = nullptr);
 	void render(jgl::Camera* camera, const jgl::Viewport* viewport = nullptr);

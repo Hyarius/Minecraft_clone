@@ -76,10 +76,8 @@ void Voxel::compose_face(World* world, Vector3 chunk_pos, int* dest, int face, i
 				voxels_to_try[j] = world->voxels(tmp_pos + neightbour_compose_face[face][2 - j]);
 				voxels_to_try[j + 3] = world->voxels(tmp_pos + neightbour_compose_face[face][2 - j] + jgl::Vector3::up());
 			}
-			if (voxels_to_try[j] == nullptr ||
-				(voxels_to_try[j + 3] != nullptr && voxels_to_try[j + 3]->type() > AIR_BLOCK &&
-				block_alpha_array[voxels_to_try[j + 3]->type()] == 1.0f) ||
-				voxels_to_try[j]->type() != _type)
+			if (voxels_to_try[j] == nullptr || (voxels_to_try[j + 3] != nullptr && voxels_to_try[j + 3]->type() > AIR_BLOCK &&
+				block_alpha_array[voxels_to_try[j + 3]->type()] == 1.0f) || voxels_to_try[j]->type() != _type)
 				voxel_value[j] = DIFFERENT;
 		}
 		int sprite_index_delta = _type * 35;
@@ -91,12 +89,11 @@ void Voxel::compose_face(World* world, Vector3 chunk_pos, int* dest, int face, i
 	}
 }
 
-jgl::Mesh* Voxel::construct(World* world, Vector3 chunk_pos, jgl::Mesh* target)
+jgl::Mesh* Voxel::construct(World* world, Chunk ** chunk_array, Voxel** voxel_array, jgl::Mesh* target)
 {
 	if (_type == -1)
 		return (nullptr);
 
-	Vector3 self_pos = _rel_pos + chunk_pos * chunk_size;
 	jgl::Mesh* result;
 
 	if (target == nullptr)
@@ -111,11 +108,9 @@ jgl::Mesh* Voxel::construct(World* world, Vector3 chunk_pos, jgl::Mesh* target)
 
 	for (size_t face = 0; face < 9; face++)
 	{
-		Vector3 tmp_next = self_pos + voxel_neighbour[face];
-		Voxel* tmp_voxel = world->voxels(tmp_next);
-		float tmp_alpha = (tmp_voxel == nullptr || tmp_voxel->type() <= AIR_BLOCK ? base_alpha : block_alpha_array[tmp_voxel->type()]);
+		Voxel* other_voxel = voxel_array[face];
 
-		if (tmp_voxel == nullptr || tmp_voxel->type() <= AIR_BLOCK || tmp_alpha != base_alpha)
+		if (other_voxel == nullptr || other_voxel->type() <= AIR_BLOCK || block_alpha_array[other_voxel->type()] != base_alpha)
 		{
 			for (size_t index = 0; index < 2; index++)
 			{
@@ -131,7 +126,7 @@ jgl::Mesh* Voxel::construct(World* world, Vector3 chunk_pos, jgl::Mesh* target)
 					tmp_vertices_index[j] = tmp_index;
 					tmp_normales_index[j] = face;
 				}
-				compose_face(world, chunk_pos, tmp_uvs_index, face, index);
+				compose_face(world, chunk_array[4]->pos(), tmp_uvs_index, face, index);
 				result->add_face(jgl::Face(tmp_vertices_index, tmp_uvs_index, tmp_normales_index));
 			}
 		}
