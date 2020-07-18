@@ -61,20 +61,20 @@ void Voxel::compose_face(World* world, Vector3 chunk_pos, int* dest, int face, i
 		Vector3 tmp_pos = _rel_pos + chunk_pos * chunk_size;
 		Chunk* tmp_chunk = world->chunks(chunk_pos);
 		Voxel* voxels_to_try[6] = {
-			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 0]),
-			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 1]),
-			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 2]),
-			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 0] + jgl::Vector3::up()),
-			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 1] + jgl::Vector3::up()),
-			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2 - 2] + jgl::Vector3::up())
+			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2]),
+			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][1]),
+			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][0]),
+			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][2] + jgl::Vector3::up()),
+			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][1] + jgl::Vector3::up()),
+			tmp_chunk->voxels(_rel_pos + neightbour_compose_face[face][0] + jgl::Vector3::up())
 		};
 		int voxel_value[3] = { IDENTICAL, IDENTICAL, IDENTICAL };
 		for (size_t j = 0; j < 3; j++)
 		{
 			if (voxels_to_try[j] == nullptr)
 			{
-				voxels_to_try[j] = world->voxels(tmp_pos + neightbour_compose_face[face][2 - j]);
-				voxels_to_try[j + 3] = world->voxels(tmp_pos + neightbour_compose_face[face][2 - j] + jgl::Vector3::up());
+				voxels_to_try[j] = world->voxels(tmp_pos + neightbour_compose_face[face][j]);
+				voxels_to_try[j + 3] = world->voxels(tmp_pos + neightbour_compose_face[face][j] + jgl::Vector3::up());
 			}
 			if (voxels_to_try[j] == nullptr || (voxels_to_try[j + 3] != nullptr && voxels_to_try[j + 3]->type() > AIR_BLOCK &&
 				block_alpha_array[voxels_to_try[j + 3]->type()] == 1.0f) || voxels_to_try[j]->type() != _type)

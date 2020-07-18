@@ -4,7 +4,7 @@ Minimap::Minimap(World* p_world, Player* p_player, jgl::Widget* p_parent) : jgl:
 {
 	_world = p_world;
 	_player = p_player;
-	_camera = new jgl::Camera(_player->pos() + jgl::Vector3(0, 100, 0), 45, g_application->size().x / g_application->size().y);
+	_camera = new jgl::Camera(_player->pos() + jgl::Vector3(0, 10, 0), 45, g_application->size().x / g_application->size().y);
 	_camera->look_at(_player->pos());
 }
 

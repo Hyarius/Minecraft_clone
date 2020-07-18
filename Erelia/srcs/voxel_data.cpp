@@ -54,8 +54,8 @@ Vector3 voxel_neighbour[9]{
 };
 
 int face_index_order[2][3]{
-	{0, 1, 2},
-	{2, 1, 3}
+	{0, 2, 1},
+	{2, 3, 1}
 };
 
 Vector2 voxel_uv[35]{
@@ -299,7 +299,7 @@ Vector3 neightbour_compose_face[4][3]{
 };
 
 int delta_face_index[2][3]{
-	{0, 1, 5},
-	{5, 1, 6}
+	{0, 5, 1},
+	{5, 6, 1}
 };
 

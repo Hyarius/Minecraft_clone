@@ -123,7 +123,7 @@ void World::render(jgl::Camera* camera, Player* player, const jgl::Viewport* vie
 
 void World::render(jgl::Camera* camera, Player* player, int height, const jgl::Viewport* viewport)
 {
-	int distance = 6;
+	int distance = 2;
 
 	Vector3 player_chunk = ((player->pos() * Vector3(1, 0, 1)) / chunk_size).floor();
 	Vector3 player_direction = (player->body()->forward() * Vector3(-1, 0, 1)).normalize();
